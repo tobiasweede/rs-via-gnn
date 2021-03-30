@@ -51,17 +51,20 @@ def train(dataset, args):
     # Prepare torchtext.legacy.dataset and vocabulary
     fields = {}
     examples = []
-    for key, texts in item_texts.items():
-        fields[key] = torchtext.legacy.data.Field(include_lengths=True, lower=True, batch_first=True)
-    for i in range(g.number_of_nodes(item_ntype)):
-        example = torchtext.legacy.data.Example.fromlist(
-            [item_texts[key][i] for key in item_texts.keys()],
-            [(key, fields[key]) for key in item_texts.keys()])
-        examples.append(example)
-    textset = torchtext.legacy.data.Dataset(examples, fields)
-    for key, field in fields.items():
-        field.build_vocab(getattr(textset, key))
-        #field.build_vocab(getattr(textset, key), vectors='fasttext.simple.300d')
+    if item_texts:
+        for key, texts in item_texts.items():
+            fields[key] = torchtext.legacy.data.Field(include_lengths=True, lower=True, batch_first=True)
+        for i in range(g.number_of_nodes(item_ntype)):
+            example = torchtext.legacy.data.Example.fromlist(
+                [item_texts[key][i] for key in item_texts.keys()],
+                [(key, fields[key]) for key in item_texts.keys()])
+            examples.append(example)
+        textset = torchtext.legacy.data.Dataset(examples, fields)
+        for key, field in fields.items():
+            field.build_vocab(getattr(textset, key))
+            #field.build_vocab(getattr(textset, key), vectors='fasttext.simple.300d')
+    else:
+        textset = torchtext.legacy.data.Dataset(examples, fields)
 
     # Sampler
     batch_sampler = sampler_module.ItemToItemBatchSampler(
@@ -116,6 +119,7 @@ def train(dataset, args):
             h_item = torch.cat(h_item_batches, 0)
 
             print(evaluation.evaluate_nn(dataset, h_item, args.k, args.batch_size))
+            evaluation.
 
 if __name__ == '__main__':
     # Arguments
