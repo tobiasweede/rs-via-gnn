@@ -119,7 +119,7 @@ def train(dataset, args):
             h_item = torch.cat(h_item_batches, 0)
 
             print(evaluation.evaluate_nn(dataset, h_item, args.k, args.batch_size))
-            evaluation.
+
 
 if __name__ == '__main__':
     # Arguments
