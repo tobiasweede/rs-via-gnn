@@ -1,0 +1,8 @@
+# list environments
+conda env list
+
+# activate environment
+conda activate rapids-0.17
+
+# torch needs to be installed as 1.7
+
