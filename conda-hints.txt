@@ -2,7 +2,8 @@
 conda env list
 
 # activate environment
+conda activate GNN
 conda activate rapids-0.17
 
-# torch needs to be installed as 1.7
-
+# install packages
+conda install numpy
