@@ -1,0 +1,39 @@
+#!/env/bin/python
+
+import os
+
+from model import random_prediction_model
+
+all_features = ["text_tokens", "hashtags", "tweet_id", "present_media", "present_links", "present_domains",\
+                "tweet_type","language", "tweet_timestamp", "engaged_with_user_id", "engaged_with_user_follower_count",\
+               "engaged_with_user_following_count", "engaged_with_user_is_verified", "engaged_with_user_account_creation",\
+               "engaging_user_id", "enaging_user_follower_count", "enaging_user_following_count", "enaging_user_is_verified",\
+               "enaging_user_account_creation", "engagee_follows_engager"]
+
+all_features_to_idx = dict(zip(all_features, range(len(all_features))))
+
+def parse_input_line(line):
+    features = line.split("\x01")
+    tweet_id = features[all_features_to_idx['tweet_id']]
+    user_id = features[all_features_to_idx['engaging_user_id']]
+    input_feats = features[all_features_to_idx['text_tokens']]
+    return tweet_id, user_id, input_feats
+
+
+def evaluate_test_set():
+    model = random_prediction_model
+    part_files = [os.path.join('./test', f) for f in os.listdir('./test') if 'part' in f]
+
+    with open('results.csv', 'w') as output:
+        for file in part_files:
+            with open(file, 'r') as f:
+                for line in f.readlines():
+                    tweet_id, user_id, features = parse_input_line(line)
+                    reply_pred = model(features)
+                    retweet_pred = model(features)
+                    quote_pred = model(features)
+                    fav_pred = model(features)
+                    output.write(f'{tweet_id},{user_id},{reply_pred},{retweet_pred},{quote_pred},{fav_pred}\n')
+
+if __name__ == "__main__":
+    evaluate_test_set()
