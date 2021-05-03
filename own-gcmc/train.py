@@ -13,7 +13,8 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 
-from data import MovieLens
+from movielens import MovieLens
+from amazon import Amazon
 from model import BiDecoder, GCMCLayer
 from utils import get_activation, get_optimizer, torch_total_param_num, torch_net_info, MetricLogger
 
@@ -72,8 +73,12 @@ def evaluate(args, net, dataset, segment='valid'):
 
 def train(args):
     print(args)
-    dataset = MovieLens(args.data_name, args.device, use_one_hot_fea=args.use_one_hot_fea, symm=args.gcn_agg_norm_symm,
-                        test_ratio=args.data_test_ratio, valid_ratio=args.data_valid_ratio)
+    if args.data_name == 'electronic':
+        dataset = Amazon(args.data_name, args.device, use_one_hot_fea=args.use_one_hot_fea, symm=args.gcn_agg_norm_symm,
+                            test_ratio=args.data_test_ratio, valid_ratio=args.data_valid_ratio)
+    else:
+        dataset = MovieLens(args.data_name, args.device, use_one_hot_fea=args.use_one_hot_fea, symm=args.gcn_agg_norm_symm,
+                         test_ratio=args.data_test_ratio, valid_ratio=args.data_valid_ratio)
     print("Loading data finished ...\n")
 
     args.src_in_units = dataset.user_feature_shape[1]
@@ -190,24 +195,24 @@ def train(args):
 
 
 def config():
-    parser = argparse.ArgumentParser(description='GCMC')
-    parser.add_argument('--seed', default=123, type=int)
+    parser = argparse.ArgumentParser(description='GCMC adaptation')
+    parser.add_argument('--seed', default=2021, type=int)
     parser.add_argument('--device', default='0', type=int,
                         help='Running device. E.g `--device 0`, if using cpu, set `--device -1`')
-    parser.add_argument('--save_dir', type=str, help='The saving directory')
-    parser.add_argument('--save_id', type=int, help='The saving log id')
+    parser.add_argument('--save_dir', type=str, help='The saving directory. Dataset name if left blank.')
+    parser.add_argument('--save_id', type=int, help='The saving log id. Generated randomly if left blank.')
     parser.add_argument('--silent', action='store_true')
     parser.add_argument('--data_name', default='ml-1m', type=str,
-                        help='The dataset name: ml-100k, ml-1m, ml-10m')
+                        help='The dataset name: ml-100k, ml-1m, ml-10m, electronic')
     parser.add_argument('--data_test_ratio', type=float, default=0.1) ## for ml-100k the test ration is 0.2
     parser.add_argument('--data_valid_ratio', type=float, default=0.1)
     parser.add_argument('--use_one_hot_fea', action='store_true', default=False)
     parser.add_argument('--model_activation', type=str, default="leaky")
     parser.add_argument('--gcn_dropout', type=float, default=0.7)
-    parser.add_argument('--gcn_agg_norm_symm', type=bool, default=True)
+    parser.add_argument('--gcn_agg_norm_symm', type=bool, default=True, help='Use symmetric nomalization.')
     parser.add_argument('--gcn_agg_units', type=int, default=500)
-    parser.add_argument('--gcn_agg_accum', type=str, default="sum")
-    parser.add_argument('--gcn_out_units', type=int, default=75)
+    parser.add_argument('--gcn_agg_accum', type=str, default="sum", help='Aggregator function.')
+    parser.add_argument('--gcn_out_units', type=int, default=75, help='Size for hidden embeddings.')
     parser.add_argument('--gen_r_num_basis_func', type=int, default=2)
     parser.add_argument('--train_max_iter', type=int, default=300)
     parser.add_argument('--train_log_interval', type=int, default=1)

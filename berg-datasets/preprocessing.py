@@ -239,7 +239,9 @@ def load_data_monti(dataset, data_path='data/', testing=False):
         val_labels, u_val_idx, v_val_idx, test_labels, u_test_idx, v_test_idx, class_values
 
 if __name__ == '__main__':
-    print('preprocessing:')
-    #load_data_monti('douban', '/home/weiss/rs_data/')
-    #load_data_monti('flixster', '/home/weiss/rs_data/')
-    #load_data_monti('yahoo_music', '/home/weiss/rs_data/')
+    print('douban:')
+    load_data_monti('douban', '/home/weiss/rs_data/')
+    print('\n\nflixster:')
+    load_data_monti('flixster', '/home/weiss/rs_data/')
+    print('\n\nyahoo:')
+    load_data_monti('yahoo_music', '/home/weiss/rs_data/')
