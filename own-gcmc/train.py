@@ -38,11 +38,11 @@ class Net(nn.Module):
                                  num_basis=args.gen_r_num_basis_func)
 
     def forward(self, enc_graph, dec_graph, ufeat, ifeat):
-        user_out, movie_out = self.encoder(
+        user_out, item_out = self.encoder(
             enc_graph,
             ufeat,
             ifeat)
-        pred_ratings = self.decoder(dec_graph, user_out, movie_out)
+        pred_ratings = self.decoder(dec_graph, user_out, item_out)
         return pred_ratings
 
 def evaluate(args, net, dataset, segment='valid'):
@@ -64,7 +64,7 @@ def evaluate(args, net, dataset, segment='valid'):
     net.eval()
     with th.no_grad():
         pred_ratings = net(enc_graph, dec_graph,
-                           dataset.user_feature, dataset.movie_feature)
+                           dataset.user_feature, dataset.item_feature)
     real_pred_ratings = (th.softmax(pred_ratings, dim=1) *
                          nd_possible_rating_values.view(1, -1)).sum(dim=1)
     rmse = ((real_pred_ratings - rating_values) ** 2.).mean().item()
@@ -82,7 +82,10 @@ def train(args):
     print("Loading data finished ...\n")
 
     args.src_in_units = dataset.user_feature_shape[1]
-    args.dst_in_units = dataset.movie_feature_shape[1]
+    if args.data_name == 'electronic':
+        args.dst_in_units = dataset.item_feature_shape[1]
+    else:
+        args.dst_in_units = dataset.item_feature_shape[1]
     args.rating_vals = dataset.possible_rating_values
 
     ### build the net
@@ -127,8 +130,12 @@ def train(args):
         if iter_idx > 3:
             t0 = time.time()
         net.train()
-        pred_ratings = net(dataset.train_enc_graph, dataset.train_dec_graph,
-                           dataset.user_feature, dataset.movie_feature)
+        if args.data_name == 'electronic':
+            pred_ratings = net(dataset.train_enc_graph, dataset.train_dec_graph,
+                               dataset.user_feature, dataset.item_feature)
+        else:
+            pred_ratings = net(dataset.train_enc_graph, dataset.train_dec_graph,
+                               dataset.user_feature, dataset.item_feature)
         loss = rating_loss_net(pred_ratings, train_gt_labels).mean()
         count_loss += loss.item()
         optimizer.zero_grad()

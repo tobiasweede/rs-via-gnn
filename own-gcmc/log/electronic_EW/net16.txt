@@ -1,19 +1,19 @@
-Total Param Number: 1398910
+Total Param Number: 124411410
 Params:
 	encoder.ufc.weight: torch.Size([75, 500]), 37500
 	encoder.ufc.bias: torch.Size([75]), 75
 	encoder.ifc.weight: torch.Size([75, 500]), 37500
 	encoder.ifc.bias: torch.Size([75]), 75
-	encoder.conv.mods.1.weight: torch.Size([943, 100]), 94300
-	encoder.conv.mods.rev-1.weight: torch.Size([1682, 100]), 168200
-	encoder.conv.mods.2.weight: torch.Size([943, 100]), 94300
-	encoder.conv.mods.rev-2.weight: torch.Size([1682, 100]), 168200
-	encoder.conv.mods.3.weight: torch.Size([943, 100]), 94300
-	encoder.conv.mods.rev-3.weight: torch.Size([1682, 100]), 168200
-	encoder.conv.mods.4.weight: torch.Size([943, 100]), 94300
-	encoder.conv.mods.rev-4.weight: torch.Size([1682, 100]), 168200
-	encoder.conv.mods.5.weight: torch.Size([943, 100]), 94300
-	encoder.conv.mods.rev-5.weight: torch.Size([1682, 100]), 168200
+	encoder.conv.mods.1_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-1_0.weight: torch.Size([48190, 500]), 24095000
+	encoder.conv.mods.2_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-2_0.weight: torch.Size([48190, 500]), 24095000
+	encoder.conv.mods.3_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-3_0.weight: torch.Size([48190, 500]), 24095000
+	encoder.conv.mods.4_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-4_0.weight: torch.Size([48190, 500]), 24095000
+	encoder.conv.mods.5_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-5_0.weight: torch.Size([48190, 500]), 24095000
 	decoder.Ps.0: torch.Size([75, 75]), 5625
 	decoder.Ps.1: torch.Size([75, 75]), 5625
 	decoder.combine_basis.weight: torch.Size([5, 2]), 10
@@ -26,34 +26,34 @@ Net(
     (W_r): None
     (conv): HeteroGraphConv(
       (mods): ModuleDict(
-        (1): GCMCGraphConv(
+        (1_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (rev-1): GCMCGraphConv(
+        (rev-1_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (2): GCMCGraphConv(
+        (2_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (rev-2): GCMCGraphConv(
+        (rev-2_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (3): GCMCGraphConv(
+        (3_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (rev-3): GCMCGraphConv(
+        (rev-3_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (4): GCMCGraphConv(
+        (4_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (rev-4): GCMCGraphConv(
+        (rev-4_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (5): GCMCGraphConv(
+        (5_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
-        (rev-5): GCMCGraphConv(
+        (rev-5_0): GCMCGraphConv(
           (dropout): Dropout(p=0.7, inplace=False)
         )
       )

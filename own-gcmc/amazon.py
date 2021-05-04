@@ -1,17 +1,16 @@
 """MovieLens dataset"""
-import numpy as np
 import os
-import re
+import zipfile
+
+import dgl
+import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 import torch as th
-
-import dgl
-from dgl.data.utils import extract_archive, get_download_dir
-from utils import to_etype_name
-
+from dgl.data.utils import get_download_dir
 from kaggle.api.kaggle_api_extended import KaggleApi  # for data download
-import zipfile
+
+from utils import to_etype_name
 
 _repo = {
     'electronic': 'prokaggler/amazon-electronic-product-recommendation',
@@ -104,24 +103,26 @@ class Amazon(object):
         # download and extract
         download_dir = get_download_dir()
         self._dir = os.path.join(download_dir, name)
-        self._ratingsfile = _repo[name].split('/')[-1]+'.zip'
-        if not self._ratingsfile in os.listdir(self._dir):
+        self._ratingsfile = _repo[name].split('/')[-1]
+        if not self._ratingsfile+'.zip' in os.listdir(self._dir):
             # Download data from kaggle
             api = KaggleApi()
             api.authenticate()
             api.dataset_download_files(dataset=_repo[name],
                                        path=self._dir,
                                        force=False)
-            for fname in os.listdir(self._dir):
-                if fname.endswith('.zip'):
-                    with zipfile.ZipFile(self._dir+'/'+fname, 'r') as zipref:
-                        zipref.extractall(self._dir)
+        if not self._ratingsfile+'.csv' in os.listdir(self._dir):
+                with zipfile.ZipFile(self._dir+'/'+self._ratingsfile+'.zip', 'r') as zipref:
+                    zipinfos = zipref.infolist()
+                    for info in zipinfos:
+                       info.filename = self._ratingsfile+'.csv'
+                       zipref.extract(info, path=self._dir)
         print("Starting processing {} ...".format(self._name))
-        self._load_raw_user_info()
-        self._load_raw_item_info()
         print('......')
         if self._name == 'electronic':
-            self.all_rating_info = self._load_raw_rates(os.path.join(self._dir, self._ratingsfile), ';')
+            self.all_rating_info = self._load_raw_rates(os.path.join(self._dir, self._ratingsfile+'.csv'), sep=',')
+            self._load_raw_user_info()
+            self._load_raw_item_info()
             num_test = int(np.ceil(self.all_rating_info.shape[0] * self._test_ratio))
             shuffled_idx = np.random.permutation(self.all_rating_info.shape[0])
             self.test_rating_info = self.all_rating_info.iloc[shuffled_idx[: num_test]]
@@ -141,15 +142,15 @@ class Amazon(object):
         print("\t\tValid rating pairs : {}".format(self.valid_rating_info.shape[0]))
         print("\tTest rating pairs  : {}".format(self.test_rating_info.shape[0]))
 
-        self.user_info = self._drop_unseen_nodes(orign_info=self.user_info,
-                                                 cmp_col_name="id",
-                                                 reserved_ids_set=set(self.all_rating_info["user_id"].values),
-                                                 label="user")
+        # self.user_info = self._drop_unseen_nodes(orign_info=self.user_info,
+        #                                          cmp_col_name="id",
+        #                                          reserved_ids_set=set(self.all_rating_info["user_id"].values),
+        #                                          label="user")
 
-        self.item_info = self._drop_unseen_nodes(orign_info=self.item_info,
-                                                  cmp_col_name="id",
-                                                  reserved_ids_set=set(self.all_rating_info["item_id"].values),
-                                                  label="item")
+        # self.item_info = self._drop_unseen_nodes(orign_info=self.item_info,
+        #                                           cmp_col_name="id",
+        #                                           reserved_ids_set=set(self.all_rating_info["item_id"].values),
+        #                                           label="item")
 
         # Map user/item to the global id
         self.global_user_id_map = {ele: i for i, ele in enumerate(self.user_info['id'])}
@@ -170,7 +171,7 @@ class Amazon(object):
             #     self.item_feature = th.FloatTensor(self._process_item_fea())
             # else:
             #     self.user_feature = th.FloatTensor(self._process_user_fea()).to(self._device)
-            #     self.item_feature = th.FloatTensor(self._process_iteam_fea()).to(self._device)
+            #     self.item_feature = th.FloatTensor(self._process_item_fea()).to(self._device)
             raise NotImplementedError
         if self.user_feature is None:
             self.user_feature_shape = (self.num_user, self.num_user)
@@ -319,23 +320,23 @@ class Amazon(object):
         return self._num_item
 
     def _drop_unseen_nodes(self, orign_info, cmp_col_name, reserved_ids_set, label):
-        # print("  -----------------")
-        # print("{}: {}(reserved) v.s. {}(from info)".format(label, len(reserved_ids_set),
-        #                                                      len(set(orign_info[cmp_col_name].values))))
+        print("  -----------------")
+        print("{}: {} (reserved) vs. {} (from info)".format(label, len(reserved_ids_set),
+                                                             len(set(orign_info[cmp_col_name].values))))
         if reserved_ids_set != set(orign_info[cmp_col_name].values):
             pd_rating_ids = pd.DataFrame(list(reserved_ids_set), columns=["id_graph"])
-            # print("\torign_info: ({}, {})".format(orign_info.shape[0], orign_info.shape[1]))
+            print("\torign_info: ({}, {})".format(orign_info.shape[0], orign_info.shape[1]))
             data_info = orign_info.merge(pd_rating_ids, left_on=cmp_col_name, right_on='id_graph', how='outer')
             data_info = data_info.dropna(subset=[cmp_col_name, 'id_graph'])
             data_info = data_info.drop(columns=["id_graph"])
             data_info = data_info.reset_index(drop=True)
-            # print("\tAfter dropping, data shape: ({}, {})".format(data_info.shape[0], data_info.shape[1]))
+            print("\tAfter dropping, data shape: ({}, {})".format(data_info.shape[0], data_info.shape[1]))
             return data_info
         else:
             orign_info = orign_info.reset_index(drop=True)
             return orign_info
 
-    def _load_raw_rates(self, file_path, sep):
+    def _load_raw_rates(self, file_path, sep, n=50):
         """In electronics, the rates have the following format
 
         UserID;ItemID;Rating;Timestamp
@@ -356,6 +357,9 @@ class Amazon(object):
             # dtype={'user_id': np.int32, 'item_id': np.int32,
             #       'ratings': np.float32, 'timestamp': np.int64},
             engine='python')
+        counts = rating_info['user_id'].value_counts()  # count ratings per user
+        # only keep users with more than n ratings
+        rating_info = rating_info[rating_info['user_id'].isin(counts[counts >= n].index)]
         return rating_info
 
     def _load_raw_user_info(self):
@@ -366,12 +370,7 @@ class Amazon(object):
         user_info : pd.DataFrame
         """
         if self._name == 'electronic':
-            rating_info = pd.read_csv(
-                os.path.join(self._dir, self._ratingsfile), header=None,
-                names=['user_id', 'item_id', 'rating', 'timestamp'],
-                # dtype={'userId': np.int32, 'item_id': np.int32, 'rating': np.float32,
-                #       'timestamp': np.int32},
-                engine='python')
+            rating_info = self.all_rating_info
             self.user_info = pd.DataFrame(np.unique(rating_info['user_id'].values), columns=['id'])
         else:
             raise NotImplementedError
@@ -384,12 +383,7 @@ class Amazon(object):
         user_info : pd.DataFrame
         """
         if self._name == 'electronic':
-            rating_info = pd.read_csv(
-                os.path.join(self._dir, self._ratingsfile), header=None,
-                names=['user_id', 'item_id', 'rating', 'timestamp'],
-                # dtype={'userId': np.int32, 'item_id': np.int32, 'rating': np.float32,
-                #       'timestamp': np.int32},
-                engine='python')
+            rating_info = self.all_rating_info
             self.item_info = pd.DataFrame(np.unique(rating_info['item_id'].values), columns=['id'])
         else:
             raise NotImplementedError
