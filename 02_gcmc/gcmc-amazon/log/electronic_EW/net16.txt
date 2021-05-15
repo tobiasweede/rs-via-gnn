@@ -1,0 +1,71 @@
+Total Param Number: 124411410
+Params:
+	encoder.ufc.weight: torch.Size([75, 500]), 37500
+	encoder.ufc.bias: torch.Size([75]), 75
+	encoder.ifc.weight: torch.Size([75, 500]), 37500
+	encoder.ifc.bias: torch.Size([75]), 75
+	encoder.conv.mods.1_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-1_0.weight: torch.Size([48190, 500]), 24095000
+	encoder.conv.mods.2_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-2_0.weight: torch.Size([48190, 500]), 24095000
+	encoder.conv.mods.3_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-3_0.weight: torch.Size([48190, 500]), 24095000
+	encoder.conv.mods.4_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-4_0.weight: torch.Size([48190, 500]), 24095000
+	encoder.conv.mods.5_0.weight: torch.Size([1540, 500]), 770000
+	encoder.conv.mods.rev-5_0.weight: torch.Size([48190, 500]), 24095000
+	decoder.Ps.0: torch.Size([75, 75]), 5625
+	decoder.Ps.1: torch.Size([75, 75]), 5625
+	decoder.combine_basis.weight: torch.Size([5, 2]), 10
+Net(
+  (_act): LeakyReLU(negative_slope=0.1)
+  (encoder): GCMCLayer(
+    (ufc): Linear(in_features=500, out_features=75, bias=True)
+    (ifc): Linear(in_features=500, out_features=75, bias=True)
+    (dropout): Dropout(p=0.7, inplace=False)
+    (W_r): None
+    (conv): HeteroGraphConv(
+      (mods): ModuleDict(
+        (1_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (rev-1_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (2_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (rev-2_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (3_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (rev-3_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (4_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (rev-4_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (5_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+        (rev-5_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.7, inplace=False)
+        )
+      )
+    )
+    (agg_act): LeakyReLU(negative_slope=0.1)
+  )
+  (decoder): BiDecoder(
+    (dropout): Dropout(p=0.0, inplace=False)
+    (Ps): ParameterList(
+        (0): Parameter containing: [torch.cuda.FloatTensor of size 75x75 (GPU 0)]
+        (1): Parameter containing: [torch.cuda.FloatTensor of size 75x75 (GPU 0)]
+    )
+    (combine_basis): Linear(in_features=2, out_features=5, bias=False)
+  )
+)

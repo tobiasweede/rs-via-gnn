@@ -3,7 +3,6 @@ conda env list
 
 # activate environment
 conda activate GNN
-conda activate rapids-0.17
 
 # install packages
 conda install numpy

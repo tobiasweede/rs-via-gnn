@@ -1,4 +1,4 @@
-pytorch-blitz/data/
-pytorch-blitz/runs/
-gcmc/.vector_cache/
+learning/pytorch-blitz/data/
+learning/pytorch-blitz/runs/
+02_gcmc/gcmc-ml/.vector_cache/
 
