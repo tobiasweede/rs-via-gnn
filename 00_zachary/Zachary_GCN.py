@@ -72,7 +72,7 @@ class GCN(nn.Module):
         h = self.conv2(g, h)
         return h
 
-net = GCN(5, 5, 2)
+net = GCN(5, 4, 2)
 
 # Data preparation and initialization
 # We use learnable embeddings to initialize the node features. Since this is a
