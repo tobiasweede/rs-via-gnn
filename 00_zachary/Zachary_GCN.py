@@ -65,10 +65,11 @@ class GCN(nn.Module):
         super(GCN, self).__init__()
         self.conv1 = GraphConv(in_feats, hidden_size)
         self.conv2 = GraphConv(hidden_size, num_classes)
+        self.relu = nn.LeakyReLU()
 
     def forward(self, g, inputs):
         h = self.conv1(g, inputs)
-        h = torch.relu(h)
+        h = self.relu(h)
         h = self.conv2(g, h)
         return h
 
