@@ -6,11 +6,6 @@ master thesis ***Recommender Systems via Graph Neural Networks***.
 
 We address:
 * Fundamental proof of concept for the _Message Passing_ paradigm
-
-To get warm, we implement several versions of the ZKC serparation but in Pytorch Geometric (PyG) and Deep Graph Library (DGL).
-  
-![ZKC separation](00_zachary/zkc-separation.gif "ZKC separation")
-
 * MLN baselines for different RS data sets
 * GNN experiments for different RS data sets
 
@@ -33,6 +28,13 @@ _Only relevant files and folders are listed:_
 It is suggested to use a dedicated python instance.
 We use _conda_. Required packages can be found in `environment.yml`.
 See [conda docs](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) for further instructions.
+
+## Get started
+
+To get warm, we implemented several versions of the ZKC separation both in Pytorch Geometric (PyG) and Deep Graph Library (DGL).
+
+![ZKC separation](00_zachary/zkc-separation.gif "ZKC separation")
+
 
 ## Credits
 For our experiments we heavily rely on other people's work.
