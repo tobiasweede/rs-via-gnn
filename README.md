@@ -20,6 +20,7 @@ _Only relevant files and folders are listed:_
   * Zachary_GCN.py: Plain python version of the separation using DGL
   * Zachary_GCN.ipynb: Jupyter version of the separatoin using DGL
   * Zachary_GCN_pyG.ipynb: Alternative approach using PyG.
+  * Zachary_untrained_GCN.py: Even without training some separation is noticeable.
 * __01_mln-baselines__
   * XXXX.ipynb: All the code lies here.
 * __02_gcmc__
