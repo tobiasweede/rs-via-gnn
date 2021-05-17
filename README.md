@@ -6,13 +6,20 @@ master thesis ***Recommender Systems via Graph Neural Networks***.
 
 We address:
 * Fundamental proof of concept for the _Message Passing_ paradigm
+
+To get warm, we implement several versions of the ZKC serparation but in Pytorch Geometric (PyG) and Deep Graph Library (DGL).
+  
+![ZKC separation](00_zachary/zkc-separation.gif "ZKC separation")
+
 * MLN baselines for different RS data sets
 * GNN experiments for different RS data sets
 
 ## Structure
 _Only relevant files and folders are listed:_
 * __00_zachary__
-  * XXXX.ipynb: All the code lies here.
+  * Zachary_GCN.py: Plain python version of the separation using DGL
+  * Zachary_GCN.ipynb: Jupyter version of the separatoin using DGL
+  * Zachary_GCN_pyG.ipynb: Alternative approach using PyG.
 * __01_mln-baselines__
   * XXXX.ipynb: All the code lies here.
 * __02_gcmc__
