@@ -13,7 +13,7 @@ from kaggle.api.kaggle_api_extended import KaggleApi  # for data download
 from utils import to_etype_name
 
 _repo = {
-    'electronic': 'prokaggler/amazon-electronic-product-recommendation',
+    'electronic': 'prokaggler/amazon-electronic-electronic-product-recommendation',
 }
 
 READ_DATASET_PATH = get_download_dir()

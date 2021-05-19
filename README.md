@@ -16,7 +16,13 @@ _Only relevant files and folders are listed:_
   * Zachary_GCN_pyG.ipynb: Alternative node classification approach using PyG.
   * Zachary_untrained_GCN.py: Node classification - even without training some separation is noticeable.
 * __01_mln-baselines__
-  * XXXX.ipynb: All the code lies here.
+  * amazon-electronic
+    * XXXX.ipynb: All the code lies here.
+    * XXXX.ipynb: All the code lies here.
+  * goodreads
+    * XXXX.ipynb: All the code lies here.
+  * movielens
+    * XXXX.ipynb: All the code lies here.
 * __02_gcmc__
   * XXXX.ipynb: All the code lies here.
 * __03_igmc__
