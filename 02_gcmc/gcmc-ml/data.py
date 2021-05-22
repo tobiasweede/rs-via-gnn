@@ -10,12 +10,6 @@ import dgl
 from dgl.data.utils import download, extract_archive, get_download_dir
 from utils import to_etype_name
 
-_urls = {
-    'ml-100k' : 'http://files.grouplens.org/datasets/movielens/ml-100k.zip',
-    'ml-1m' : 'http://files.grouplens.org/datasets/movielens/ml-1m.zip',
-    'ml-10m' : 'http://files.grouplens.org/datasets/movielens/ml-10m.zip',
-}
-
 READ_DATASET_PATH = get_download_dir()
 GENRES_ML_100K =\
     ['unknown', 'Action', 'Adventure', 'Animation',
@@ -26,14 +20,7 @@ GENRES_ML_1M = GENRES_ML_100K[1:]
 GENRES_ML_10M = GENRES_ML_100K + ['IMAX']
 
 class MovieLens(object):
-    """MovieLens dataset used by GCMC model
-
-    TODO(minjie): make this dataset more general
-
-    The dataset stores MovieLens ratings in two types of graphs. The encoder graph
-    contains rating value information in the form of edge types. The decoder graph
-    stores plain user-movie pairs in the form of a bipartite graph with no rating
-    information. All graphs have two types of nodes: "user" and "movie".
+    """MovieLens dataset used by GC-MC model
 
     The training, validation and test set can be summarized as follows:
 
@@ -106,23 +93,19 @@ class MovieLens(object):
         self._test_ratio = test_ratio
         self._valid_ratio = valid_ratio
         # download and extract
-        download_dir = get_download_dir()
-        zip_file_path = '{}/{}.zip'.format(download_dir, name)
-        download(_urls[name], path=zip_file_path, overwrite=False)
-        extract_archive(zip_file_path, '{}/{}'.format(download_dir, name))
-        if name == 'ml-10m':
-            root_folder = 'ml-10M100K'
-        else:
-            root_folder = name
-        self._dir = os.path.join(download_dir, name, root_folder)
+        download_dir = '/home/weiss/rs_data'
+        root_folder = name
+        self._dir = os.path.join(download_dir, root_folder)
         print("Starting processing {} ...".format(self._name))
         self._load_raw_user_info()
         self._load_raw_movie_info()
         print('......')
         if self._name == 'ml-100k':
-            self.all_train_rating_info = self._load_raw_rates(os.path.join(self._dir, 'u1.base'), '\t')
-            self.test_rating_info = self._load_raw_rates(os.path.join(self._dir, 'u1.test'), '\t')
-            self.all_rating_info = pd.concat([self.all_train_rating_info, self.test_rating_info])
+            self.all_rating_info = self._load_raw_rates(os.path.join(self._dir, 'u.data'), '\t')
+            num_test = int(np.ceil(self.all_rating_info.shape[0] * self._test_ratio))
+            shuffled_idx = np.random.permutation(self.all_rating_info.shape[0])
+            self.test_rating_info = self.all_rating_info.iloc[shuffled_idx[: num_test]]
+            self.all_train_rating_info = self.all_rating_info.iloc[shuffled_idx[num_test:]]
         elif self._name == 'ml-1m' or self._name == 'ml-10m':
             self.all_rating_info = self._load_raw_rates(os.path.join(self._dir, 'ratings.dat'), '::')
             num_test = int(np.ceil(self.all_rating_info.shape[0] * self._test_ratio))

@@ -30,7 +30,7 @@ warnings.showwarning = warn_with_traceback
 
 def logger(info, model, optimizer):
     epoch, train_loss, test_rmse = info['epoch'], info['train_loss'], info['test_rmse']
-    with open(os.path.join(args.res_dir, 'log.txt'), 'a') as f:
+    with open(os.path.join(args.res_dir, 'logs.txt'), 'a') as f:
         f.write('Epoch {}, train loss {:.4f}, test rmse {:.6f}\n'.format(
             epoch, train_loss, test_rmse))
     if type(epoch) == int and epoch % args.save_interval == 0:

@@ -20,7 +20,7 @@ for prefix in prefixs:
         res_base = 'results/' + dataset + prefix
         RMSE = []
         for seed in seed_range:
-            res_dir = res_base + str(seed) + '_testmode/log.txt'
+            res_dir = res_base + str(seed) + '_testmode/logs.txt'
             with open(res_dir, 'r') as f:
                 line = f.readlines()[line_num]
                 rmse = float(line.split(' ')[-1])
