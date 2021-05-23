@@ -346,63 +346,6 @@ class BiDecoder(nn.Module):
             out = self.combine_basis(out)
         return out
 
-class DenseBiDecoder(nn.Module):
-    r"""Dense bi-linear decoder.
-
-    Dense implementation of the bi-linear decoder used in GCMC. Suitable when
-    the graph can be efficiently represented by a pair of arrays (one for source
-    nodes; one for destination nodes).
-
-    Parameters
-    ----------
-    in_units : int
-        Size of input user and movie features
-    num_classes : int
-        Number of classes.
-    num_basis : int, optional
-        Number of basis. (Default: 2)
-    dropout_rate : float, optional
-        Dropout raite (Default: 0.0)
-    """
-    def __init__(self,
-                 in_units,
-                 num_classes,
-                 num_basis=2,
-                 dropout_rate=0.0):
-        super().__init__()
-        self._num_basis = num_basis
-        self.dropout = nn.Dropout(dropout_rate)
-        self.P = nn.Parameter(th.randn(num_basis, in_units, in_units))
-        self.combine_basis = nn.Linear(self._num_basis, num_classes, bias=False)
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        for p in self.parameters():
-            if p.dim() > 1:
-                nn.init.xavier_uniform_(p)
-
-    def forward(self, ufeat, ifeat):
-        """Forward function.
-
-        Compute logits for each pair ``(ufeat[i], ifeat[i])``.
-
-        Parameters
-        ----------
-        ufeat : th.Tensor
-            User embeddings. Shape: (B, D)
-        ifeat : th.Tensor
-            Movie embeddings. Shape: (B, D)
-
-        Returns
-        -------
-        th.Tensor
-            Predicting scores for each user-movie edge. Shape: (B, num_classes)
-        """
-        ufeat = self.dropout(ufeat)
-        ifeat = self.dropout(ifeat)
-        out = th.einsum('ai,bij,aj->ab', ufeat, self.P, ifeat)
-        out = self.combine_basis(out)
-        return out
 
 def dot_or_identity(A, B, device=None):
     # if A is None, treat as identity matrix

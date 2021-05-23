@@ -4,26 +4,29 @@ The script loads the full graph in CPU and samples subgraphs for computing
 gradients on the training device. The script also supports multi-GPU for
 further acceleration.
 """
-import os, time
 import argparse
 import logging
+import os
 import random
 import string
+import time
 import traceback
-import numpy as np
-import tqdm
-import torch as th
-import torch.nn as nn
-import torch.multiprocessing as mp
-from torch.utils.data import DataLoader
-from torch.multiprocessing import Queue
-from torch.nn.parallel import DistributedDataParallel
 from _thread import start_new_thread
 from functools import wraps
-from data import MovieLens
-from model import GCMCLayer, DenseBiDecoder, BiDecoder
-from utils import get_activation, get_optimizer, torch_total_param_num, torch_net_info, MetricLogger, to_etype_name
+
 import dgl
+import numpy as np
+import torch as th
+import torch.multiprocessing as mp
+import torch.nn as nn
+import tqdm
+from torch.multiprocessing import Queue
+from torch.nn.parallel import DistributedDataParallel
+
+from data import MovieLens
+from model import GCMCLayer, BiDecoder
+from utils import get_activation, get_optimizer, torch_total_param_num, to_etype_name, MetricLogger
+
 
 class Net(nn.Module):
     def __init__(self, args, dev_id):
@@ -170,29 +173,28 @@ def config():
     parser.add_argument('--save_dir', type=str, help='The saving directory')
     parser.add_argument('--save_id', type=int, help='The saving logs id')
     parser.add_argument('--silent', action='store_true')
-    parser.add_argument('--data_name', default='ml-1m', type=str,
-                        help='The dataset name: ml-100k, ml-1m, ml-10m')
-    parser.add_argument('--data_test_ratio', type=float, default=0.1) ## for ml-100k the test ration is 0.2
-    parser.add_argument('--data_valid_ratio', type=float, default=0.1)
+    parser.add_argument('--data_name', default='ml-1m', type=str)
+    parser.add_argument('--data_test_ratio', type=float, default=0.2) ## for ml-100k the test ration is 0.2
+    parser.add_argument('--data_valid_ratio', type=float, default=0.2)
     parser.add_argument('--use_one_hot_fea', action='store_true', default=False)
     parser.add_argument('--model_activation', type=str, default="leaky")
-    parser.add_argument('--gcn_dropout', type=float, default=0.7)
+    parser.add_argument('--gcn_dropout', type=float, default=0.3)
     parser.add_argument('--gcn_agg_norm_symm', type=bool, default=True)
     parser.add_argument('--gcn_agg_units', type=int, default=500)
     parser.add_argument('--gcn_agg_accum', type=str, default="sum")
-    parser.add_argument('--gcn_out_units', type=int, default=75)
+    parser.add_argument('--gcn_out_units', type=int, default=100)
     parser.add_argument('--gen_r_num_basis_func', type=int, default=2)
-    parser.add_argument('--train_max_epoch', type=int, default=1000)
+    parser.add_argument('--train_max_epoch', type=int, default=30)
     parser.add_argument('--train_log_interval', type=int, default=1)
     parser.add_argument('--train_valid_interval', type=int, default=1)
     parser.add_argument('--train_optimizer', type=str, default="adam")
     parser.add_argument('--train_grad_clip', type=float, default=1.0)
-    parser.add_argument('--train_lr', type=float, default=0.01)
-    parser.add_argument('--train_min_lr', type=float, default=0.0001)
-    parser.add_argument('--train_lr_decay_factor', type=float, default=0.5)
-    parser.add_argument('--train_decay_patience', type=int, default=25)
-    parser.add_argument('--train_early_stopping_patience', type=int, default=50)
-    parser.add_argument('--share_param', default=False, action='store_true')
+    parser.add_argument('--train_lr', type=float, default=1e-3)
+    parser.add_argument('--train_min_lr', type=float, default=1e-5)
+    parser.add_argument('--train_lr_decay_factor', type=float, default=0.0)
+    parser.add_argument('--train_decay_patience', type=int, default=30)
+    parser.add_argument('--train_early_stopping_patience', type=int, default=30)
+    parser.add_argument('--share_param', default=True, action='store_true')
     parser.add_argument('--mix_cpu_gpu', default=False, action='store_true')
     parser.add_argument('--minibatch_size', type=int, default=20000)
     parser.add_argument('--num_workers_per_gpu', type=int, default=8)
@@ -262,6 +264,7 @@ def run(proc_id, n_gpus, args, devices, dataset):
         th.FloatTensor(dataset.possible_rating_values)
     nd_possible_rating_values = nd_possible_rating_values.to(dev_id)
 
+    start = time.time()
     net = Net(args=args, dev_id=dev_id)
     net = net.to(dev_id)
     if n_gpus > 1:
@@ -281,6 +284,15 @@ def run(proc_id, n_gpus, args, devices, dataset):
     print("Start training ...")
     dur = []
     iter_idx = 1
+    logging_str = None
+
+    ### prepare the logger
+    train_loss_logger = MetricLogger(['iter', 'loss', 'rmse'], ['%d', '%.4f', '%.4f'],
+                                     os.path.join(args.save_dir, 'train_loss%d.csv' % args.save_id))
+    valid_loss_logger = MetricLogger(['iter', 'rmse'], ['%d', '%.4f'],
+                                     os.path.join(args.save_dir, 'valid_loss%d.csv' % args.save_id))
+    test_loss_logger = MetricLogger(['iter', 'rmse'], ['%d', '%.4f'],
+                                    os.path.join(args.save_dir, 'test_loss%d.csv' % args.save_id))
 
     for epoch in range(1, args.train_max_epoch):
         if epoch > 1:
@@ -316,6 +328,10 @@ def run(proc_id, n_gpus, args, devices, dataset):
                 count_rmse += rmse.item()
                 count_num += pred_ratings.shape[0]
 
+                if iter_idx % args.train_log_interval == 0:
+                    train_loss_logger.log(iter=iter_idx,
+                                          loss=count_loss / (iter_idx + 1), rmse=count_rmse / count_num)
+
                 tq.set_postfix({'loss': '{:.4f}'.format(count_loss / iter_idx),
                                 'rmse': '{:.4f}'.format(count_rmse / count_num)},
                                refresh=False)
@@ -336,6 +352,7 @@ def run(proc_id, n_gpus, args, devices, dataset):
                                       dataset=dataset,
                                       dataloader=valid_dataloader,
                                       segment='valid')
+                valid_loss_logger.log(iter=iter_idx, rmse=valid_rmse)
                 logging_str = 'Val RMSE={:.4f}'.format(valid_rmse)
 
                 if valid_rmse < best_valid_rmse:
@@ -349,6 +366,7 @@ def run(proc_id, n_gpus, args, devices, dataset):
                                          dataloader=test_dataloader,
                                          segment='test')
                     best_test_rmse = test_rmse
+                    test_loss_logger.log(iter=iter_idx, rmse=test_rmse)
                     logging_str += ', Test RMSE={:.4f}'.format(test_rmse)
                 else:
                     no_better_valid += 1
@@ -369,10 +387,19 @@ def run(proc_id, n_gpus, args, devices, dataset):
             if n_gpus > 1:
                 th.distributed.barrier()
 
-        print(logging_str)
+        if logging_str is not None:
+            print(logging_str)
     if proc_id == 0:
         print('Best epoch Idx={}, Best Valid RMSE={:.4f}, Best Test RMSE={:.4f}'.format(
               best_epoch, best_valid_rmse, best_test_rmse))
+
+        train_loss_logger.close()
+        valid_loss_logger.close()
+        test_loss_logger.close()
+
+        with open(os.path.join(args.save_dir, f'duration_{args.save_id:d}.txt'), 'a') as f:
+            print(f'wall: {time.time() - start}')
+            f.write(f'wall: {time.time() - start}')
 
 if __name__ == '__main__':
     args = config()
