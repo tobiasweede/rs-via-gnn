@@ -83,6 +83,7 @@ def train_multiple_epochs(train_dataset,
             'epoch': epoch,
             'train_loss': train_loss,
             'test_rmse': rmses[-1],
+            'duration': 0
         }
         if not batch_pbar:
             pbar.set_description(
@@ -132,6 +133,7 @@ def test_once(test_dataset,
         'epoch': epoch_info,
         'train_loss': 0,
         'test_rmse': rmse,
+        'Duration': duration
     }
     if logger is not None:
         logger(eval_info, None, None)

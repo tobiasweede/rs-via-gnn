@@ -231,14 +231,24 @@ if args.data_name in ['flixster', 'douban', 'yahoo_music']:
         val_labels, val_u_indices, val_v_indices, test_labels, test_u_indices, 
         test_v_indices, class_values
     ) = load_data_monti(args.data_name, args.testing, rating_map, post_rating_map)
-elif args.data_name == 'ml_100k':
+elif args.data_name == 'ml_100k_canonical_split':
     print("Using official MovieLens split u1.base/u1.test with 20% validation...")
     (
         u_features, v_features, adj_train, train_labels, train_u_indices, train_v_indices,
-        val_labels, val_u_indices, val_v_indices, test_labels, test_u_indices, 
+        val_labels, val_u_indices, val_v_indices, test_labels, test_u_indices,
         test_v_indices, class_values
     ) = load_official_trainvaltest_split(
         args.data_name, args.testing, rating_map, post_rating_map, args.ratio
+    )
+elif args.data_name == 'ml_100k':
+    print("Using MovieLens with own 60/20/20 split...")
+    (
+        u_features, v_features, adj_train, train_labels, train_u_indices, train_v_indices,
+        val_labels, val_u_indices, val_v_indices, test_labels, test_u_indices,
+        test_v_indices, class_values
+    ) = create_trainvaltest_split(
+        args.data_name, 2021, args.testing, datasplit_path, True, True, rating_map,
+        post_rating_map, args.ratio
     )
 else:
     (
@@ -361,47 +371,29 @@ print('Used #train graphs: %d, #test graphs: %d' % (
 '''
     Train and apply the GNN model
 '''
-if False:
-    # DGCNN_RS GNN model
-    model = DGCNN_RS(
-        train_graphs, 
-        latent_dim=[32, 32, 32, 1], 
-        k=0.6, 
-        num_relations=len(class_values), 
-        num_bases=4, 
-        regression=True, 
-        adj_dropout=args.adj_dropout, 
-        force_undirected=args.force_undirected
-    )
-    # record the k used in sortpooling
-    if not args.transfer:
-        with open(os.path.join(args.res_dir, 'cmd_input.txt'), 'a') as f:
-            f.write(' --k ' + str(model.k) + '\n')
-            print('k is saved.')
+
+start = time.time()
+# 03_igmc GNN model (default)
+if args.transfer:
+    num_relations = args.num_relations
+    multiply_by = args.multiply_by
 else:
-    start = time.time()
-    # 03_igmc GNN model (default)
-    if args.transfer:
-        num_relations = args.num_relations
-        multiply_by = args.multiply_by
-    else:
-        num_relations = len(class_values)
-        multiply_by = 1
-    model = IGMC(
-        train_graphs, 
-        latent_dim=[32, 32, 32, 32], 
-        num_relations=num_relations, 
-        num_bases=4, 
-        regression=True, 
-        adj_dropout=args.adj_dropout, 
-        force_undirected=args.force_undirected, 
-        side_features=args.use_features, 
-        n_side_features=n_features, 
-        multiply_by=multiply_by
-    )
-    total_params = sum(p.numel() for param in model.parameters() for p in param)
-    print(f'Total number of parameters is {total_params}')
-    
+    num_relations = len(class_values)
+    multiply_by = 1
+model = IGMC(
+    train_graphs,
+    latent_dim=[32, 32, 32, 32],
+    num_relations=num_relations,
+    num_bases=4,
+    regression=True,
+    adj_dropout=args.adj_dropout,
+    force_undirected=args.force_undirected,
+    side_features=args.use_features,
+    n_side_features=n_features,
+    multiply_by=multiply_by
+)
+total_params = sum(p.numel() for param in model.parameters() for p in param)
+print(f'Total number of parameters is {total_params}')
 
 if not args.no_train:
     train_multiple_epochs(

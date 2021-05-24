@@ -156,9 +156,9 @@ def create_trainvaltest_split(dataset, seed=1234, testing=False, datasplit_path=
         num_test = ratings.shape[0] - num_train - num_val
     else:
         print("Using random dataset split ...")
-        num_test = int(np.ceil(ratings.shape[0] * 0.1))
+        num_test = int(np.ceil(ratings.shape[0] * 0.2))
         if dataset == 'ml_100k':
-            num_val = int(np.ceil(ratings.shape[0] * 0.9 * 0.05))
+            num_val = int(np.ceil(ratings.shape[0] * 0.2))
         else:
             num_val = int(np.ceil(ratings.shape[0] * 0.9 * 0.05))
         num_train = ratings.shape[0] - num_val - num_test
@@ -369,7 +369,7 @@ def load_official_trainvaltest_split(dataset, testing=False, rating_map=None, po
     data_array_test = data_test.values.tolist()
     data_array_test = np.array(data_array_test)
 
-    if ratio < 1.0:
+    if ratio < 1.0:  # used if we only want to load a fraction of the data
         data_array_train = data_array_train[data_array_train[:, -1].argsort()[:int(ratio*len(data_array_train))]]
 
     data_array = np.concatenate([data_array_train, data_array_test], axis=0)
