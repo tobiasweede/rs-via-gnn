@@ -173,7 +173,7 @@ class GCMCLayer(nn.Module):
             msg_units = msg_units // len(rating_vals)
         self.dropout = nn.Dropout(dropout_rate)
         self.W_r = nn.ParameterDict()
-        subConv = {}
+        subConv = {}  # list of GCN layers (one per rating)
         for rating in rating_vals:
             # PyTorch parameter name can't contain "."
             rating = to_etype_name(rating)
@@ -249,7 +249,7 @@ class GCMCLayer(nn.Module):
         new_ifeat : torch.Tensor
             New item features
         """
-        in_feats = {'user' : ufeat, 'item' : ifeat}
+        in_feats = {'user': ufeat, 'item': ifeat}
         mod_args = {}
         for i, rating in enumerate(self.rating_vals):
             rating = to_etype_name(rating)

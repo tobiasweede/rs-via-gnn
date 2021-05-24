@@ -29,10 +29,10 @@ warnings.showwarning = warn_with_traceback
 
 
 def logger(info, model, optimizer):
-    epoch, train_loss, test_rmse = info['epoch'], info['train_loss'], info['test_rmse']
+    epoch, train_loss, test_rmse, duration = info['epoch'], info['train_loss'], info['test_rmse'], info['duration']
     with open(os.path.join(args.res_dir, 'logs.txt'), 'a') as f:
-        f.write('Epoch {}, train loss {:.4f}, test rmse {:.6f}\n'.format(
-            epoch, train_loss, test_rmse))
+        f.write('Epoch {}, train loss {:.4f}, test rmse {:.6f}, duration {:.3f}\n'.format(
+            epoch, train_loss, test_rmse, duration))
     if type(epoch) == int and epoch % args.save_interval == 0:
         print('Saving model states...')
         model_name = os.path.join(args.res_dir, 'model_checkpoint{}.pth'.format(epoch))
@@ -379,6 +379,7 @@ if False:
             f.write(' --k ' + str(model.k) + '\n')
             print('k is saved.')
 else:
+    start = time.time()
     # 03_igmc GNN model (default)
     if args.transfer:
         num_relations = args.num_relations
@@ -475,6 +476,7 @@ else:
         'epoch': epoch_info,
         'train_loss': 0,
         'test_rmse': rmse,
+        'duration': time.time()-start
     }
     logger(eval_info, None, None)
 

@@ -1,0 +1,111 @@
+Total Param Number: 40278740
+Params:
+	encoder.ufc.weight: torch.Size([10, 50]), 500
+	encoder.ufc.bias: torch.Size([10]), 10
+	encoder.ifc.weight: torch.Size([10, 50]), 500
+	encoder.ifc.bias: torch.Size([10]), 10
+	encoder.conv.mods.0_5.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-0_5.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.1_0.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-1_0.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.1_5.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-1_5.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.2_0.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-2_0.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.2_5.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-2_5.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.3_0.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-3_0.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.3_5.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-3_5.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.4_0.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-4_0.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.4_5.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-4_5.weight: torch.Size([10677, 50]), 533850
+	encoder.conv.mods.5_0.weight: torch.Size([69878, 50]), 3493900
+	encoder.conv.mods.rev-5_0.weight: torch.Size([10677, 50]), 533850
+	decoder.Ps.0: torch.Size([10, 10]), 100
+	decoder.Ps.1: torch.Size([10, 10]), 100
+	decoder.combine_basis.weight: torch.Size([10, 2]), 20
+Net(
+  (_act): LeakyReLU(negative_slope=0.1)
+  (encoder): GCMCLayer(
+    (ufc): Linear(in_features=50, out_features=10, bias=True)
+    (ifc): Linear(in_features=50, out_features=10, bias=True)
+    (dropout): Dropout(p=0.3, inplace=False)
+    (W_r): None
+    (conv): HeteroGraphConv(
+      (mods): ModuleDict(
+        (0_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-0_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (1_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-1_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (1_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-1_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (2_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-2_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (2_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-2_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (3_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-3_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (3_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-3_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (4_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-4_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (4_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-4_5): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (5_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+        (rev-5_0): GCMCGraphConv(
+          (dropout): Dropout(p=0.3, inplace=False)
+        )
+      )
+    )
+    (agg_act): LeakyReLU(negative_slope=0.1)
+  )
+  (decoder): BiDecoder(
+    (dropout): Dropout(p=0.0, inplace=False)
+    (Ps): ParameterList(
+        (0): Parameter containing: [torch.cuda.FloatTensor of size 10x10 (GPU 0)]
+        (1): Parameter containing: [torch.cuda.FloatTensor of size 10x10 (GPU 0)]
+    )
+    (combine_basis): Linear(in_features=2, out_features=10, bias=False)
+  )
+)

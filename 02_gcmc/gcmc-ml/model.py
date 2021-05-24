@@ -173,7 +173,7 @@ class GCMCLayer(nn.Module):
             msg_units = msg_units // len(rating_vals)
         self.dropout = nn.Dropout(dropout_rate)
         self.W_r = nn.ParameterDict()
-        subConv = {}
+        subConv = {}  # list of GCN layers (one per rating)
         for rating in rating_vals:
             # PyTorch parameter name can't contain "."
             rating = to_etype_name(rating)
@@ -334,6 +334,9 @@ class BiDecoder(nn.Module):
             Predicting scores for each user-movie edge.
         """
         with graph.local_scope():
+            """ By entering a local scope, any out-place mutation to the feature data will
+            not reflect to the original graph, thus making it easier to use in a function scope
+            (e.g. forward computation of a model)."""
             ufeat = self.dropout(ufeat)
             ifeat = self.dropout(ifeat)
             graph.nodes['movie'].data['h'] = ifeat
