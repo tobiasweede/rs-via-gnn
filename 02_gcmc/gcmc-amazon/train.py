@@ -63,7 +63,7 @@ def evaluate(args, net, dataset, segment='valid'):
     net.eval()
     with th.no_grad():
         pred_ratings = net(enc_graph, dec_graph,
-                           dataset.user_feature, dataset.movie_feature)
+                           dataset.user_feature, dataset.item_feature)
     real_pred_ratings = (th.softmax(pred_ratings, dim=1) *
                          nd_possible_rating_values.view(1, -1)).sum(dim=1)
     rmse = ((real_pred_ratings - rating_values) ** 2.).mean().item()

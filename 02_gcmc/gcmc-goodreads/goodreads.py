@@ -12,15 +12,8 @@ from kaggle.api.kaggle_api_extended import KaggleApi  # for data download
 
 from utils import to_etype_name
 
-_repo = {
-    'electronic': 'prokaggler/amazon-electronic-electronic-product-recommendation',
-}
-
-READ_DATASET_PATH = get_download_dir()
-
-
-class Amazon(object):
-    """Amazon dataset used by GCMC model
+class Goodreads(object):
+    """Goodreads dataset used by GCMC model
 
     The dataset stores Amazon ratings in two types of graphs.
 
@@ -100,27 +93,19 @@ class Amazon(object):
         self._symm = symm
         self._test_ratio = test_ratio
         self._valid_ratio = valid_ratio
+        self._dir = '/home/weiss/rs_data/amazon-electronic-product-recommendation/'
+        self._ratingsfile = 'ratings_Electronics (1).csv'
         # download and extract
-        download_dir = get_download_dir()
-        self._dir = os.path.join(download_dir, name)
-        self._ratingsfile = _repo[name].split('/')[-1]
-        if not self._ratingsfile+'.zip' in os.listdir(self._dir):
-            # Download data from kaggle
-            api = KaggleApi()
-            api.authenticate()
-            api.dataset_download_files(dataset=_repo[name],
-                                       path=self._dir,
-                                       force=False)
-        if not self._ratingsfile+'.csv' in os.listdir(self._dir):
-                with zipfile.ZipFile(self._dir+'/'+self._ratingsfile+'.zip', 'r') as zipref:
+        if not self._ratingsfile in os.listdir(self._dir):
+                with zipfile.ZipFile(self._dir+'/'+ 'amazon-electronic-product-recommendation.zip', 'r') as zipref:
                     zipinfos = zipref.infolist()
                     for info in zipinfos:
-                       info.filename = self._ratingsfile+'.csv'
+                       info.filename = self._ratingsfile
                        zipref.extract(info, path=self._dir)
         print("Starting processing {} ...".format(self._name))
         print('......')
         if self._name == 'electronic':
-            self.all_rating_info = self._load_raw_rates(os.path.join(self._dir, self._ratingsfile+'.csv'), sep=',')
+            self.all_rating_info = self._load_raw_rates(os.path.join(self._dir, self._ratingsfile), sep=',')
             self._load_raw_user_info()
             self._load_raw_item_info()
             num_test = int(np.ceil(self.all_rating_info.shape[0] * self._test_ratio))
@@ -387,7 +372,3 @@ class Amazon(object):
             self.item_info = pd.DataFrame(np.unique(rating_info['item_id'].values), columns=['id'])
         else:
             raise NotImplementedError
-
-
-if __name__ == '__main__':
-    Amazon(name="electronic", device=th.device('cpu'), symm=True)
