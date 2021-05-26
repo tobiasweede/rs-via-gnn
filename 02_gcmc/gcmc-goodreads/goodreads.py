@@ -93,18 +93,11 @@ class Goodreads(object):
         self._symm = symm
         self._test_ratio = test_ratio
         self._valid_ratio = valid_ratio
-        self._dir = '/home/weiss/rs_data/amazon-electronic-product-recommendation/'
-        self._ratingsfile = 'ratings_Electronics (1).csv'
-        # download and extract
-        if not self._ratingsfile in os.listdir(self._dir):
-                with zipfile.ZipFile(self._dir+'/'+ 'amazon-electronic-product-recommendation.zip', 'r') as zipref:
-                    zipinfos = zipref.infolist()
-                    for info in zipinfos:
-                       info.filename = self._ratingsfile
-                       zipref.extract(info, path=self._dir)
+        self._dir = '/home/weiss/rs_data/goodreads/'
+        self._ratingsfile = 'goodreads_interactions.csv'
         print("Starting processing {} ...".format(self._name))
         print('......')
-        if self._name == 'electronic':
+        if self._name == 'goodreads':
             self.all_rating_info = self._load_raw_rates(os.path.join(self._dir, self._ratingsfile), sep=',')
             self._load_raw_user_info()
             self._load_raw_item_info()
@@ -321,10 +314,9 @@ class Goodreads(object):
             orign_info = orign_info.reset_index(drop=True)
             return orign_info
 
-    def _load_raw_rates(self, file_path, sep, n=50):
-        """In electronics, the rates have the following format
-
-        UserID;ItemID;Rating;Timestamp
+    def _load_raw_rates(self, file_path, sep, n=50, m=1000):
+        """In Goodreads, the rates have the following format
+        user_id;book_id;is_read;rating;is_reviewed
 
         timestamp is unix timestamp and can be converted by pd.to_datetime(X, unit='s')
 
@@ -336,15 +328,18 @@ class Goodreads(object):
         -------
         rating_info : pd.DataFrame
         """
-        rating_info = pd.read_csv(
-            file_path, sep=sep, header=None,
-            names=['user_id', 'item_id', 'rating', 'timestamp'],
-            # dtype={'user_id': np.int32, 'item_id': np.int32,
-            #       'ratings': np.float32, 'timestamp': np.int64},
-            engine='python')
-        counts = rating_info['user_id'].value_counts()  # count ratings per user
+        rating_info = pd.read_csv(self._dir + self._ratingsfile)
+        rating_info = rating_info[rating_info['rating'] != 0]  # drop empty reviews
+        rating_info.drop(columns=['is_read', 'is_reviewed'], inplace=True)
+        rating_info.rename(columns={'book_id': 'item_id'}, inplace=True)
+
         # only keep users with more than n ratings
+        counts = rating_info['user_id'].value_counts()  # count ratings per user
+        mask = (counts >= n) & (counts <= m)
         rating_info = rating_info[rating_info['user_id'].isin(counts[counts >= n].index)]
+        print(mask.value_counts())
+        ratings = rating_info[rating_info['user_id'].isin(mask[mask == True].index)]
+
         return rating_info
 
     def _load_raw_user_info(self):
@@ -354,11 +349,8 @@ class Goodreads(object):
         -------
         user_info : pd.DataFrame
         """
-        if self._name == 'electronic':
-            rating_info = self.all_rating_info
-            self.user_info = pd.DataFrame(np.unique(rating_info['user_id'].values), columns=['id'])
-        else:
-            raise NotImplementedError
+        rating_info = self.all_rating_info
+        self.user_info = pd.DataFrame(np.unique(rating_info['user_id'].values), columns=['id'])
 
     def _load_raw_item_info(self):
         """ For electronic, there is no item information. We read the item id from the rating file.
@@ -367,8 +359,5 @@ class Goodreads(object):
         -------
         user_info : pd.DataFrame
         """
-        if self._name == 'electronic':
-            rating_info = self.all_rating_info
-            self.item_info = pd.DataFrame(np.unique(rating_info['item_id'].values), columns=['id'])
-        else:
-            raise NotImplementedError
+        rating_info = self.all_rating_info
+        self.item_info = pd.DataFrame(np.unique(rating_info['item_id'].values), columns=['id'])

@@ -72,12 +72,11 @@ def evaluate(args, net, dataset, segment='valid'):
 
 def train(args):
     print(args)
-    if args.data_name == 'electronic':
-        dataset = Amazon(args.data_name, args.device, use_one_hot_fea=args.use_one_hot_fea, symm=args.gcn_agg_norm_symm,
+    if args.data_name == 'goodreads':
+        dataset = Goodreads(args.data_name, args.device, use_one_hot_fea=args.use_one_hot_fea, symm=args.gcn_agg_norm_symm,
                             test_ratio=args.data_test_ratio, valid_ratio=args.data_valid_ratio)
     else:
-        dataset = MovieLens(args.data_name, args.device, use_one_hot_fea=args.use_one_hot_fea, symm=args.gcn_agg_norm_symm,
-                         test_ratio=args.data_test_ratio, valid_ratio=args.data_valid_ratio)
+        raise NotImplementedError
     print("Loading data finished ...\n")
 
     args.src_in_units = dataset.user_feature_shape[1]

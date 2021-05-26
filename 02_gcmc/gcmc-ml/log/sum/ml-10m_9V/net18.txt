@@ -1,9 +1,9 @@
-Total Param Number: 40278740
+Total Param Number: 40281320
 Params:
-	encoder.ufc.weight: torch.Size([10, 50]), 500
-	encoder.ufc.bias: torch.Size([10]), 10
-	encoder.ifc.weight: torch.Size([10, 50]), 500
-	encoder.ifc.bias: torch.Size([10]), 10
+	encoder.ufc.weight: torch.Size([25, 50]), 1250
+	encoder.ufc.bias: torch.Size([25]), 25
+	encoder.ifc.weight: torch.Size([25, 50]), 1250
+	encoder.ifc.bias: torch.Size([25]), 25
 	encoder.conv.mods.0_5.weight: torch.Size([69878, 50]), 3493900
 	encoder.conv.mods.rev-0_5.weight: torch.Size([10677, 50]), 533850
 	encoder.conv.mods.1_0.weight: torch.Size([69878, 50]), 3493900
@@ -24,14 +24,14 @@ Params:
 	encoder.conv.mods.rev-4_5.weight: torch.Size([10677, 50]), 533850
 	encoder.conv.mods.5_0.weight: torch.Size([69878, 50]), 3493900
 	encoder.conv.mods.rev-5_0.weight: torch.Size([10677, 50]), 533850
-	decoder.Ps.0: torch.Size([10, 10]), 100
-	decoder.Ps.1: torch.Size([10, 10]), 100
+	decoder.Ps.0: torch.Size([25, 25]), 625
+	decoder.Ps.1: torch.Size([25, 25]), 625
 	decoder.combine_basis.weight: torch.Size([10, 2]), 20
 Net(
   (_act): LeakyReLU(negative_slope=0.1)
   (encoder): GCMCLayer(
-    (ufc): Linear(in_features=50, out_features=10, bias=True)
-    (ifc): Linear(in_features=50, out_features=10, bias=True)
+    (ufc): Linear(in_features=50, out_features=25, bias=True)
+    (ifc): Linear(in_features=50, out_features=25, bias=True)
     (dropout): Dropout(p=0.3, inplace=False)
     (W_r): None
     (conv): HeteroGraphConv(
@@ -103,8 +103,8 @@ Net(
   (decoder): BiDecoder(
     (dropout): Dropout(p=0.0, inplace=False)
     (Ps): ParameterList(
-        (0): Parameter containing: [torch.cuda.FloatTensor of size 10x10 (GPU 0)]
-        (1): Parameter containing: [torch.cuda.FloatTensor of size 10x10 (GPU 0)]
+        (0): Parameter containing: [torch.cuda.FloatTensor of size 25x25 (GPU 0)]
+        (1): Parameter containing: [torch.cuda.FloatTensor of size 25x25 (GPU 0)]
     )
     (combine_basis): Linear(in_features=2, out_features=10, bias=False)
   )
