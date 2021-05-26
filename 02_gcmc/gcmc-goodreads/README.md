@@ -22,5 +22,5 @@ Supported datasets: amazon
 ## How to run
 ### Train with full-graph
 ```bash
-python3 train.py --data_name=electronic --use_one_hot_fea --gcn_agg_accum=stack --gcn_out_units=100
+python3 train_old.py --data_name=electronic --use_one_hot_fea --gcn_agg_accum=stack --gcn_out_units=100
 ```

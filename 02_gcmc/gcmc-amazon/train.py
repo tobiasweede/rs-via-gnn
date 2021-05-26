@@ -13,7 +13,6 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 
-from movielens import MovieLens
 from amazon import Amazon
 from model import BiDecoder, GCMCLayer
 from utils import get_activation, get_optimizer, torch_total_param_num, torch_net_info, MetricLogger
@@ -64,7 +63,7 @@ def evaluate(args, net, dataset, segment='valid'):
     net.eval()
     with th.no_grad():
         pred_ratings = net(enc_graph, dec_graph,
-                           dataset.user_feature, dataset.item_feature)
+                           dataset.user_feature, dataset.movie_feature)
     real_pred_ratings = (th.softmax(pred_ratings, dim=1) *
                          nd_possible_rating_values.view(1, -1)).sum(dim=1)
     rmse = ((real_pred_ratings - rating_values) ** 2.).mean().item()
@@ -88,6 +87,7 @@ def train(args):
         args.dst_in_units = dataset.item_feature_shape[1]
     args.rating_vals = dataset.possible_rating_values
 
+    start = time.time()
     ### build the net
     net = Net(args=args)
     net = net.to(args.device)
@@ -200,37 +200,41 @@ def train(args):
     valid_loss_logger.close()
     test_loss_logger.close()
 
+    with open(os.path.join(args.save_dir, f'duration_{args.save_id:d}.txt'), 'a') as f:
+        print(f'wall: {time.time() - start}')
+        f.write(f'wall: {time.time() - start}')
+
 
 def config():
-    parser = argparse.ArgumentParser(description='GCMC adaptation')
+    parser = argparse.ArgumentParser(description='GCMC')
     parser.add_argument('--seed', default=2021, type=int)
     parser.add_argument('--device', default='0', type=int,
                         help='Running device. E.g `--device 0`, if using cpu, set `--device -1`')
-    parser.add_argument('--save_dir', type=str, help='The saving directory. Dataset name if left blank.')
-    parser.add_argument('--save_id', type=int, help='The saving logs id. Generated randomly if left blank.')
+    parser.add_argument('--save_dir', type=str, help='The saving directory')
+    parser.add_argument('--save_id', type=int, help='The saving logs id')
     parser.add_argument('--silent', action='store_true')
     parser.add_argument('--data_name', default='ml-1m', type=str,
-                        help='The dataset name: ml-100k, ml-1m, ml-10m, electronic')
-    parser.add_argument('--data_test_ratio', type=float, default=0.1) ## for ml-100k the test ration is 0.2
-    parser.add_argument('--data_valid_ratio', type=float, default=0.1)
+                        help='The dataset name: ml-100k, ml-1m, ml-10m')
+    parser.add_argument('--data_test_ratio', type=float, default=0.2) ## for ml-100k the test ration is 0.2
+    parser.add_argument('--data_valid_ratio', type=float, default=0.2)
     parser.add_argument('--use_one_hot_fea', action='store_true', default=False)
     parser.add_argument('--model_activation', type=str, default="leaky")
-    parser.add_argument('--gcn_dropout', type=float, default=0.7)
-    parser.add_argument('--gcn_agg_norm_symm', type=bool, default=True, help='Use symmetric nomalization.')
+    parser.add_argument('--gcn_dropout', type=float, default=0.3)
+    parser.add_argument('--gcn_agg_norm_symm', type=bool, default=True)
     parser.add_argument('--gcn_agg_units', type=int, default=500)
-    parser.add_argument('--gcn_agg_accum', type=str, default="sum", help='Aggregator function.')
-    parser.add_argument('--gcn_out_units', type=int, default=75, help='Size for hidden embeddings.')
+    parser.add_argument('--gcn_agg_accum', type=str, default="sum")
+    parser.add_argument('--gcn_out_units', type=int, default=100)
     parser.add_argument('--gen_r_num_basis_func', type=int, default=2)
     parser.add_argument('--train_max_iter', type=int, default=300)
     parser.add_argument('--train_log_interval', type=int, default=1)
     parser.add_argument('--train_valid_interval', type=int, default=1)
     parser.add_argument('--train_optimizer', type=str, default="adam")
     parser.add_argument('--train_grad_clip', type=float, default=1.0)
-    parser.add_argument('--train_lr', type=float, default=0.01)
-    parser.add_argument('--train_min_lr', type=float, default=0.001)
-    parser.add_argument('--train_lr_decay_factor', type=float, default=0.5)
-    parser.add_argument('--train_decay_patience', type=int, default=50)
-    parser.add_argument('--train_early_stopping_patience', type=int, default=30)
+    parser.add_argument('--train_lr', type=float, default=1e-3)
+    parser.add_argument('--train_min_lr', type=float, default=1e-3)
+    parser.add_argument('--train_lr_decay_factor', type=float, default=0.0)
+    parser.add_argument('--train_decay_patience', type=int, default=300)
+    parser.add_argument('--train_early_stopping_patience', type=int, default=300)
     parser.add_argument('--share_param', default=False, action='store_true')
 
     args = parser.parse_args()
@@ -255,3 +259,5 @@ if __name__ == '__main__':
     if th.cuda.is_available():
         th.cuda.manual_seed_all(args.seed)
     train(args)
+
+
