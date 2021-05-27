@@ -89,12 +89,12 @@ parser.add_argument('--hop', default=1, metavar='S',
                     help='enclosing subgraph hop number')
 parser.add_argument('--sample-ratio', type=float, default=1.0, 
                     help='if < 1, subsample nodes per hop according to the ratio')
-parser.add_argument('--max-nodes-per-hop', default=10000, 
+parser.add_argument('--max-nodes-per-hop', default=10,
                     help='if > 0, upper bound the # nodes per hop by another subsampling')
 parser.add_argument('--use-features', action='store_true', default=False,
                     help='whether to use node features (side information)')
 # edge dropout settings
-parser.add_argument('--adj-dropout', type=float, default=0.2, 
+parser.add_argument('--adj-dropout', type=float, default=0.3,
                     help='if not 0, random drops edges from adjacency matrix with this prob')
 parser.add_argument('--force-undirected', action='store_true', default=False, 
                     help='in edge dropout, force (x, y) and (y, x) to be dropped together')
@@ -105,15 +105,15 @@ parser.add_argument('--lr', type=float, default=1e-3, metavar='LR',
                     help='learning rate (default: 1e-3)')
 parser.add_argument('--lr-decay-step-size', type=int, default=50,
                     help='decay lr by factor A every B steps')
-parser.add_argument('--lr-decay-factor', type=float, default=0.1,
+parser.add_argument('--lr-decay-factor', type=float, default=1e-5,
                     help='decay lr by factor A every B steps')
 parser.add_argument('--epochs', type=int, default=80, metavar='N',
                     help='number of epochs to train')
-parser.add_argument('--batch-size', type=int, default=50, metavar='N',
+parser.add_argument('--batch-size', type=int, default=4096, metavar='N',
                     help='batch size during training')
 parser.add_argument('--test-freq', type=int, default=1, metavar='N',
                     help='test every n epochs')
-parser.add_argument('--ARR', type=float, default=0.001, 
+parser.add_argument('--ARR', type=float, default=1e-3,
                     help='The adjacenct rating regularizer. If not 0, regularize the \
                     differences between graph convolution parameters W associated with\
                     adjacent ratings')
