@@ -1,6 +1,6 @@
 99_learning_resources/pytorch-blitz/data/
 99_learning_resources/pytorch-blitz/runs/
-02_gcmc/gcmc-ml/.vector_cache/
+02_gcmc/movielens/.vector_cache/
 01_mln-baselines/goodreads/best.weights.small
 01_mln-baselines/goodreads/best.weights.medium
 01_mln-baselines/goodreads/best.weights.big

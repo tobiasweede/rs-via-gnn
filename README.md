@@ -17,16 +17,32 @@ _Only relevant files and folders are listed:_
   * [Zachary_GCN_untrainded.ipynb](00_zachary/Zachary_GCN_untrained.ipynb): Vanilla implementation, even without training some separation is noticeable.
 * __01_mln-baselines__
   * amazon-electronic
-    * XXXX.ipynb: All the code lies here.
-    * XXXX.ipynb: All the code lies here.
+    * [amazon-electronic-descriptive-analysis.ipynb](01_mln-baselines/amazon-electronic/amazon-electronic-descriptive-analysis.ipynb): Descriptive analysis for Amazon Electronic Products data set
+    * [amazon-electronic-mln.ipynb](01_mln-baselines/amazon-electronic/amazon-electronic-mln.ipynb): MLN models for Amazon Electronic Products data set
   * goodreads
-    * XXXX.ipynb: All the code lies here.
+    * [goodreads-descriptive-analysis.ipynb](01_mln-baselines/goodreads/goodreads-descriptive-analysis.ipynb): Descriptive analysis for Goodreads data set
+    * [goodreads-mln.ipynb](01_mln-baselines/goodreads/goodreads-mln.ipynb): MLN for Goodreads data set
   * movielens
-    * XXXX.ipynb: All the code lies here.
+    * [movielens-descriptive-analysis.ipynb](01_mln-baselines/movielens/movielens-descriptive-analysis.ipynb): Descriptive analysis for ML-100k, ML-1M and ML-10M
+    * [movielens-mln-ml-100k.ipynb](01_mln-baselines/movielens/movielens-mln-ml-100k.ipynb): MLN models for ML-100k data set
+    * [movielens-mln-ml-1m.ipynb](01_mln-baselines/movielens/movielens-mln-ml-1m.ipynb): MLN models for ML-1M data set
+    * [movielens-mln-ml-10m.ipynb](01_mln-baselines/movielens/movielens-mln-ml-10m.ipynb): MLN models for ML-10M data set
 * __02_gcmc__
-  * XXXX.ipynb: All the code lies here.
+  * amazon-electronic
+    * [train.py](02_gcmc/amazon-electronic/train.py): GCMC training for Amazon Electronic Products data set
+    * [model.py](02_gcmc/amazon-electronic/model.py): GCMC model for Amazon Electronic Products data set
+    * [amazon_gcmc_training_visualization.ipynb](02_gcmc/amazon-electronic/amazon_gcmc_training_visualization.ipynb): Loss visualization for Amazon Electronic Products data set
+  * goodreads
+    * [train.py](02_gcmc/goodreads/train.py): GCMC training for Goodreads data set
+    * [model.py](02_gcmc/goodreads/model.py): GCMC model for Goodreads data set
+    * [goodreads_gcmc_training_visualization.ipynb](02_gcmc/goodreads/goodreads_gcmc_training_visualization.ipynb): Loss visualization for Goodreads data set
+  * movielens
+    * [train.py](02_gcmc/movielens/train.py): GCMC training for Movielens data sets (all used variants)
+    * [model.py](02_gcmc/movielens/model.py): GCMC model for Movielens data sets (all used variants)
+    * [movielens_gcmc_training_visualization.ipynb](02_gcmc/movielens/movielens_gcmc_training_visualization.ipynb): Loss visualization for Movielens data sets (all used variants)
 * __03_igmc__
-  * XXXX.ipynb: All the code lies here.
+  * [Main.py](03_igmc/Main.py): IGMC training for all models
+  * [models.py](03_igmc/models.py): IGMC model 
     
 ## Environment / Installation
 
