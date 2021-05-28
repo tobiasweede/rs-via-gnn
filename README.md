@@ -25,7 +25,9 @@ _Only relevant files and folders are listed:_
   * [Zachary_GCN_pyG.ipynb](00_zachary/Zachary_GCN_pyG.ipynb): Alternative node classification approach using PyG.
   * [Zachary_GCN_untrainded.ipynb](00_zachary/Zachary_GCN_untrained.ipynb): Vanilla implementation, even without training some separation is noticeable.
 * __01_mln-baselines__
-  
+
+    As baseline we use a standard MLN in three sizes.
+
   ![MLN architecture](01_mln-baselines/baseline-mln-architecture.png "MLN architecture")
   
   * amazon-electronic
@@ -40,6 +42,8 @@ _Only relevant files and folders are listed:_
     * [movielens-mln-ml-1m.ipynb](01_mln-baselines/movielens/movielens-mln-ml-1m.ipynb): MLN models for ML-1M data set
     * [movielens-mln-ml-10m.ipynb](01_mln-baselines/movielens/movielens-mln-ml-10m.ipynb): MLN models for ML-10M data set
 * __02_gcmc__
+
+  As first GNN we evaluate Graph Convolutional Matrix Completion
 
   Link to the paper: https://arxiv.org/pdf/1706.02263
   
@@ -59,6 +63,8 @@ _Only relevant files and folders are listed:_
     * [movielens_gcmc_training_visualization.ipynb](02_gcmc/movielens/movielens_gcmc_training_visualization.ipynb): Loss visualization for Movielens data sets (all used variants)
     
 * __03_igmc__
+  
+  As second GNN we evaluate Inductive Graph-based Matrix Completion
 
   Link to the paper: https://openreview.net/pdf?id=ByxxgCEYDS
 
