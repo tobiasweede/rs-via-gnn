@@ -12,9 +12,9 @@ We address:
 ## Structure
 _Only relevant files and folders are listed:_
 * __00_zachary__
-  * Zachary_GCN.ipynb: Node classification show case using DGL
-  * Zachary_GCN_pyG.ipynb: Alternative node classification approach using PyG.
-  * Zachary_untrained_GCN.py: Node classification - even without training some separation is noticeable.
+  * [Zachary_GCN_DGL.ipynb](00_zachary/Zachary_GCN.ipynb): Node classification show case using DGL
+  * [Zachary_GCN_pyG.ipynb](00_zachary/Zachary_GCN_pyG.ipynb): Alternative node classification approach using PyG.
+  * [Zachary_GCN_untrainded.ipynb](00_zachary/Zachary_GCN_untrained.ipynb): Vanilla implementation, even without training some separation is noticeable.
 * __01_mln-baselines__
   * amazon-electronic
     * XXXX.ipynb: All the code lies here.
