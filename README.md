@@ -9,13 +9,15 @@ master thesis
 We address:
 * Fundamental proof of concept for the _Message Passing_ paradigm
 * MLN baselines for different RS data sets
-* GNN experiments for different RS data sets
+* GNN experiments for different RS data sets using
+  * GCMC
+  * IGMC
 
 ## Structure
 _Only relevant files and folders are listed:_
 * __00_zachary__
   
-    To warm-up, we implemented several versions of the ZKC separation both in Pytorch Geometric (PyG) and Deep Graph Library (DGL).
+    To warm-up, we showcase several versions of the ZKC separation both in Pytorch Geometric (PyG) and Deep Graph Library (DGL).
 
     ![ZKC separation](00_zachary/zkc-separation.gif "ZKC separation")
 
@@ -39,7 +41,7 @@ _Only relevant files and folders are listed:_
     * [movielens-mln-ml-10m.ipynb](01_mln-baselines/movielens/movielens-mln-ml-10m.ipynb): MLN models for ML-10M data set
 * __02_gcmc__
 
-  Link to the original paper: https://arxiv.org/pdf/1706.02263
+  Link to the paper: https://arxiv.org/pdf/1706.02263
   
   ![GCMC architecture](02_gcmc/gcmc-architecture.png "GCMC architecture")
   
@@ -55,7 +57,13 @@ _Only relevant files and folders are listed:_
     * [train.py](02_gcmc/movielens/train.py): GCMC training for Movielens data sets (all used variants)
     * [model.py](02_gcmc/movielens/model.py): GCMC model for Movielens data sets (all used variants)
     * [movielens_gcmc_training_visualization.ipynb](02_gcmc/movielens/movielens_gcmc_training_visualization.ipynb): Loss visualization for Movielens data sets (all used variants)
+    
 * __03_igmc__
+
+  Link to the paper: https://openreview.net/pdf?id=ByxxgCEYDS
+
+  ![IGMC architecture](03_igmc/igmc-architecture.png "IGCM architecture")
+  
   * [Main.py](03_igmc/Main.py): IGMC training
   * [models.py](03_igmc/models.py): IGMC model 
     
