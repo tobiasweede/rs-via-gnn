@@ -12,10 +12,18 @@ We address:
 ## Structure
 _Only relevant files and folders are listed:_
 * __00_zachary__
+  
+    To warm-up, we implemented several versions of the ZKC separation both in Pytorch Geometric (PyG) and Deep Graph Library (DGL).
+
+    ![ZKC separation](00_zachary/zkc-separation.gif "ZKC separation")
+
   * [Zachary_GCN_DGL.ipynb](00_zachary/Zachary_GCN_DGL.ipynb): Node classification show case using DGL
   * [Zachary_GCN_pyG.ipynb](00_zachary/Zachary_GCN_pyG.ipynb): Alternative node classification approach using PyG.
   * [Zachary_GCN_untrainded.ipynb](00_zachary/Zachary_GCN_untrained.ipynb): Vanilla implementation, even without training some separation is noticeable.
 * __01_mln-baselines__
+  
+  ![MLN architecture](01_mln-baselines/baseline-mln-architecture.png "MLN architecture")
+  
   * amazon-electronic
     * [amazon-electronic-descriptive-analysis.ipynb](01_mln-baselines/amazon-electronic/amazon-electronic-descriptive-analysis.ipynb): Descriptive analysis for Amazon Electronic Products data set
     * [amazon-electronic-mln.ipynb](01_mln-baselines/amazon-electronic/amazon-electronic-mln.ipynb): MLN models for Amazon Electronic Products data set
@@ -28,6 +36,11 @@ _Only relevant files and folders are listed:_
     * [movielens-mln-ml-1m.ipynb](01_mln-baselines/movielens/movielens-mln-ml-1m.ipynb): MLN models for ML-1M data set
     * [movielens-mln-ml-10m.ipynb](01_mln-baselines/movielens/movielens-mln-ml-10m.ipynb): MLN models for ML-10M data set
 * __02_gcmc__
+
+  Link to the original paper: https://arxiv.org/pdf/1706.02263
+  
+  ![GCMC architecture](02_gcmc/gcmc-architecture.png "GCMC architecture")
+  
   * amazon-electronic
     * [train.py](02_gcmc/amazon-electronic/train.py): GCMC training for Amazon Electronic Products data set
     * [model.py](02_gcmc/amazon-electronic/model.py): GCMC model for Amazon Electronic Products data set
@@ -41,7 +54,7 @@ _Only relevant files and folders are listed:_
     * [model.py](02_gcmc/movielens/model.py): GCMC model for Movielens data sets (all used variants)
     * [movielens_gcmc_training_visualization.ipynb](02_gcmc/movielens/movielens_gcmc_training_visualization.ipynb): Loss visualization for Movielens data sets (all used variants)
 * __03_igmc__
-  * [Main.py](03_igmc/Main.py): IGMC training for all models
+  * [Main.py](03_igmc/Main.py): IGMC training
   * [models.py](03_igmc/models.py): IGMC model 
     
 ## Environment / Installation
@@ -49,12 +62,6 @@ _Only relevant files and folders are listed:_
 It is suggested to use a dedicated python instance.
 We use _conda_. Required packages can be found in `environment.yml`.
 See [conda docs](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) for further instructions.
-
-## Get started
-
-To get warm, we implemented several versions of the ZKC separation both in Pytorch Geometric (PyG) and Deep Graph Library (DGL).
-
-![ZKC separation](00_zachary/zkc-separation.gif "ZKC separation")
 
 
 ## Credits

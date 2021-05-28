@@ -1,6 +1,18 @@
 """Training GCMC model on the MovieLens data set.
 
-The script loads the full graph to the training device.
+adapted from: https://github.com/dmlc/dgl/tree/master/examples/pytorch/gcmc
+
+Parameters to run:
+
+--data_name=ml-100k  --use_one_hot_fea --gcn_agg_accum=stack  # ML-100k stack aggregator
+--data_name=ml-100k  --use_one_hot_fea --gcn_agg_accum=sum    # ML-100k sum aggregator
+
+--data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=stack  # ML-1m stack aggregator
+--data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=sum    # ML-1m sum aggregator
+
+# for the huge version we need to decrease the agg and out unit counts
+--data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=stack --gcn_agg_units 50 --gcn_out_units 25  # ML-10m stack aggregator
+--data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=sum --gcn_agg_units 50 --gcn_out_units 25  # ML-10m sum aggregator
 """
 import argparse
 import logging

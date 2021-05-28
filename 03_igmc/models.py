@@ -1,3 +1,8 @@
+""" IGMC model
+
+adapted from: https://github.com/muhanzhang/IGMC
+
+"""
 import torch
 import math
 import torch.nn as nn

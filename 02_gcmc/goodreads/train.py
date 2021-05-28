@@ -1,6 +1,16 @@
-"""Training GCMC model on the MovieLens data set.
+"""Training GCMC model on the Goodreads data set.
 
-The script loads the full graph to the training device.
+adapted from: https://github.com/dmlc/dgl/tree/master/examples/pytorch/gcmc
+
+Parameters to run:
+
+#
+# CAUTION: Will probably fail due to insufficient memory
+#
+
+--data_name=goodreads --use_one_hot_fea --gcn_agg_accum=stack  # stack aggregator
+--data_name=goodreads --use_one_hot_fea --gcn_agg_accum=sum    # sum aggregator
+
 """
 import argparse
 import logging

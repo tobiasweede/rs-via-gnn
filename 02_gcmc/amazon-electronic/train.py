@@ -1,18 +1,11 @@
-"""Training GCMC model on the MovieLens data set.
+"""Training GCMC model on the Amazon Electronic Products data set.
 
-The script loads the full graph to the training device.
+adapted from: https://github.com/dmlc/dgl/tree/master/examples/pytorch/gcmc
 
 Parameters to run:
 
---data_name=ml-100k  --use_one_hot_fea --gcn_agg_accum=stack  # ML-100k stack aggregator
---data_name=ml-100k  --use_one_hot_fea --gcn_agg_accum=sum    # ML-100k sum aggregator
-
---data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=stack  # ML-1m stack aggregator
---data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=sum    # ML-1m sum aggregator
-
-# for the huge version we need to decrease the agg and out unit counts
---data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=stack --gcn_agg_units 50 --gcn_out_units 25  # ML-10m stack aggregator
---data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=sum --gcn_agg_units 50 --gcn_out_units 25  # ML-10m sum aggregator
+--data_name=electronic --use_one_hot_fea --gcn_agg_accum=stack  # stack aggregator
+--data_name=electronic --use_one_hot_fea --gcn_agg_accum=sum    # sum aggregator
 
 """
 import argparse
@@ -228,7 +221,7 @@ def config():
     parser.add_argument('--silent', action='store_true')
     parser.add_argument('--data_name', default='ml-1m', type=str,
                         help='The dataset name: ml-100k, ml-1m, ml-10m')
-    parser.add_argument('--data_test_ratio', type=float, default=0.2) ## for ml-100k the test ration is 0.2
+    parser.add_argument('--data_test_ratio', type=float, default=0.2)
     parser.add_argument('--data_valid_ratio', type=float, default=0.2)
     parser.add_argument('--use_one_hot_fea', action='store_true', default=False)
     parser.add_argument('--model_activation', type=str, default="leaky")

@@ -1,4 +1,8 @@
-"""NN modules"""
+""" GCMC model
+
+adapted from: https://github.com/dmlc/dgl/tree/master/examples/pytorch/gcmc
+
+"""
 import torch as th
 import torch.nn as nn
 from dgl import DGLError
