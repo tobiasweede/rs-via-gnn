@@ -1,15 +1,10 @@
-"""Training GCMC model on the MovieLens data set by mini-batch sample.
+"""Training GCMC model on the Amazon Electronic Products data set by mini-batch sample.
 
 adapted from: https://github.com/dmlc/dgl/tree/master/examples/pytorch/gcmc
 
 Parameters to run:
 
---data_name=ml-100k --train_optimizer=adam --use_one_hot_fea --minibatch_size=4096 --gcn_agg_accum=stack  # ML-100k
-
---data_name=ml-1m --train_optimizer=adam --use_one_hot_fea --minibatch_size=4096 --gcn_agg_accum=stack  # ML-1m
-
-# ML-10m
---data_name=ml-10m --train_optimizer=adam --use_one_hot_fea --minibatch_size=4096 --gcn_agg_accum=stack --train-max-epoch=30
+--data_name=electronic --train_optimizer=adam --use_one_hot_fea --minibatch_size=4096 --gcn_agg_accum=stack
 
 """
 import argparse
@@ -31,7 +26,7 @@ import tqdm
 from torch.multiprocessing import Queue
 from torch.nn.parallel import DistributedDataParallel
 
-from data import MovieLens
+from amazon import Amazon
 from model import GCMCLayer, BiDecoder
 from utils import get_activation, get_optimizer, torch_total_param_num, to_etype_name, MetricLogger
 
@@ -51,7 +46,7 @@ class Net(nn.Module):
                                  share_user_item_param=args.share_param,
                                  device=dev_id)
         if args.mix_cpu_gpu and args.use_one_hot_fea:
-            # if use_one_hot_fea, user and movie feature is None
+            # if use_one_hot_fea, user and item feature is None
             # W can be extremely large, with mix_cpu_gpu W should be stored in CPU
             self.encoder.partial_to(dev_id)
         else:
@@ -63,32 +58,32 @@ class Net(nn.Module):
         self.decoder.to(dev_id)
 
     def forward(self, compact_g, frontier, ufeat, ifeat, possible_rating_values):
-        user_out, movie_out = self.encoder(frontier, ufeat, ifeat)
-        pred_ratings = self.decoder(compact_g, user_out, movie_out)
+        user_out, item_out = self.encoder(frontier, ufeat, ifeat)
+        pred_ratings = self.decoder(compact_g, user_out, item_out)
         return pred_ratings
 
 def load_subtensor(input_nodes, pair_graph, blocks, dataset, parent_graph):
     output_nodes = pair_graph.ndata[dgl.NID]
     head_feat = input_nodes['user'] if dataset.user_feature is None else \
                 dataset.user_feature[input_nodes['user']]
-    tail_feat = input_nodes['movie'] if dataset.movie_feature is None else \
-                dataset.movie_feature[input_nodes['movie']]
+    tail_feat = input_nodes['item'] if dataset.item_feature is None else \
+                dataset.item_feature[input_nodes['item']]
 
     for block in blocks:
         block.dstnodes['user'].data['ci'] = \
             parent_graph.nodes['user'].data['ci'][block.dstnodes['user'].data[dgl.NID]]
         block.srcnodes['user'].data['cj'] = \
             parent_graph.nodes['user'].data['cj'][block.srcnodes['user'].data[dgl.NID]]
-        block.dstnodes['movie'].data['ci'] = \
-            parent_graph.nodes['movie'].data['ci'][block.dstnodes['movie'].data[dgl.NID]]
-        block.srcnodes['movie'].data['cj'] = \
-            parent_graph.nodes['movie'].data['cj'][block.srcnodes['movie'].data[dgl.NID]]
+        block.dstnodes['item'].data['ci'] = \
+            parent_graph.nodes['item'].data['ci'][block.dstnodes['item'].data[dgl.NID]]
+        block.srcnodes['item'].data['cj'] = \
+            parent_graph.nodes['item'].data['cj'][block.srcnodes['item'].data[dgl.NID]]
 
     return head_feat, tail_feat, blocks
 
 def flatten_etypes(pair_graph, dataset, segment):
     n_users = pair_graph.number_of_nodes('user')
-    n_movies = pair_graph.number_of_nodes('movie')
+    n_items = pair_graph.number_of_nodes('item')
     src = []
     dst = []
     labels = []
@@ -107,8 +102,8 @@ def flatten_etypes(pair_graph, dataset, segment):
     labels = th.cat(labels)
 
     flattened_pair_graph = dgl.heterograph({
-        ('user', 'rate', 'movie'): (src, dst)},
-        num_nodes_dict={'user': n_users, 'movie': n_movies})
+        ('user', 'rate', 'item'): (src, dst)},
+        num_nodes_dict={'user': n_users, 'item': n_items})
     flattened_pair_graph.edata['rating'] = ratings
     flattened_pair_graph.edata['label'] = labels
 
@@ -417,7 +412,7 @@ if __name__ == '__main__':
 
     # For GCMC based on sample, we require node has its own features.
     # Otherwise (node_id is the feature), the model can not scale
-    dataset = MovieLens(args.data_name,
+    dataset = Amazon(args.data_name,
                         'cpu',
                         mix_cpu_gpu=args.mix_cpu_gpu,
                         use_one_hot_fea=args.use_one_hot_fea,
@@ -427,7 +422,7 @@ if __name__ == '__main__':
     print("Loading data finished ...\n")
 
     args.src_in_units = dataset.user_feature_shape[1]
-    args.dst_in_units = dataset.movie_feature_shape[1]
+    args.dst_in_units = dataset.item_feature_shape[1]
     args.rating_vals = dataset.possible_rating_values
 
     # cpu

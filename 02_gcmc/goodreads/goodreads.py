@@ -1,14 +1,11 @@
-"""MovieLens dataset"""
+"""Goodreads dataset"""
 import os
-import zipfile
 
 import dgl
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 import torch as th
-from dgl.data.utils import get_download_dir
-from kaggle.api.kaggle_api_extended import KaggleApi  # for data download
 
 from utils import to_etype_name
 
@@ -222,8 +219,12 @@ class Goodreads(object):
         return rating_pairs, rating_values
 
     def _generate_enc_graph(self, rating_pairs, rating_values, add_support=False):
-        user_item_R = np.zeros((self._num_user, self._num_item), dtype=np.float32)
-        user_item_R[rating_pairs] = rating_values
+
+        # no need to construct user_item_R -- not even sparse!
+
+        #user_item_R = np.zeros((self._num_user, self._num_item), dtype=np.float32)
+        #user_item_R = sp.csc_matrix(self._num_user, self._num_item)
+        #user_item_R[rating_pairs] = rating_values
 
         data_dict = dict()
         num_nodes_dict = {'user': self._num_user, 'item': self._num_item}
