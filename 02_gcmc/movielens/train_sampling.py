@@ -1,4 +1,4 @@
-"""Training GCMC model on the MovieLens data set by mini-batch sampling.
+"""Training GCMC model on the MovieLens data set by mini-batch sample.
 
 The script loads the full graph in CPU and samples subgraphs for computing
 gradients on the training device. The script also supports multi-GPU for
@@ -184,7 +184,7 @@ def config():
     parser.add_argument('--gcn_agg_accum', type=str, default="sum")
     parser.add_argument('--gcn_out_units', type=int, default=100)
     parser.add_argument('--gen_r_num_basis_func', type=int, default=2)
-    parser.add_argument('--train_max_epoch', type=int, default=30)
+    parser.add_argument('--train_max_epoch', type=int, default=300)
     parser.add_argument('--train_log_interval', type=int, default=1)
     parser.add_argument('--train_valid_interval', type=int, default=1)
     parser.add_argument('--train_optimizer', type=str, default="adam")
@@ -192,11 +192,11 @@ def config():
     parser.add_argument('--train_lr', type=float, default=1e-3)
     parser.add_argument('--train_min_lr', type=float, default=1e-5)
     parser.add_argument('--train_lr_decay_factor', type=float, default=0.0)
-    parser.add_argument('--train_decay_patience', type=int, default=30)
-    parser.add_argument('--train_early_stopping_patience', type=int, default=30)
-    parser.add_argument('--share_param', default=True, action='store_true')
+    parser.add_argument('--train_decay_patience', type=int, default=300)
+    parser.add_argument('--train_early_stopping_patience', type=int, default=300)
+    parser.add_argument('--share_param', default=False, action='store_true')
     parser.add_argument('--mix_cpu_gpu', default=False, action='store_true')
-    parser.add_argument('--minibatch_size', type=int, default=20000)
+    parser.add_argument('--minibatch_size', type=int, default=4096)
     parser.add_argument('--num_workers_per_gpu', type=int, default=8)
 
     args = parser.parse_args()
@@ -407,7 +407,7 @@ if __name__ == '__main__':
     devices = list(map(int, args.gpu.split(',')))
     n_gpus = len(devices)
 
-    # For GCMC based on sampling, we require node has its own features.
+    # For GCMC based on sample, we require node has its own features.
     # Otherwise (node_id is the feature), the model can not scale
     dataset = MovieLens(args.data_name,
                         'cpu',
