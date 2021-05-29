@@ -51,14 +51,17 @@ _Only relevant files and folders are listed:_
   
   * amazon-electronic
     * [train.py](02_gcmc/amazon-electronic/train.py): GCMC training for Amazon Electronic Products data set
+    * [train_sampling.py](02_gcmc/amazon-electronic/train_sampling.py): GCMC training with sampling for Amazon Electronic Products data set
     * [model.py](02_gcmc/amazon-electronic/model.py): GCMC model for Amazon Electronic Products data set
     * [amazon_gcmc_training_visualization.ipynb](02_gcmc/amazon-electronic/amazon_gcmc_training_visualization.ipynb): Loss visualization for Amazon Electronic Products data set
   * goodreads
     * [train.py](02_gcmc/goodreads/train.py): GCMC training for Goodreads data set
+    * [train_sampling.py](02_gcmc/goodreads/train_sampling.py): GCMC training with sampling for Goodreads data set
     * [model.py](02_gcmc/goodreads/model.py): GCMC model for Goodreads data set
     * [goodreads_gcmc_training_visualization.ipynb](02_gcmc/goodreads/goodreads_gcmc_training_visualization.ipynb): Loss visualization for Goodreads data set
   * movielens
     * [train.py](02_gcmc/movielens/train.py): GCMC training for Movielens data sets (all used variants)
+    * [train_sampling.py](02_gcmc/movielens/train_sampling.py): GCMC training with sampling for Movielens data sets (all used variants)
     * [model.py](02_gcmc/movielens/model.py): GCMC model for Movielens data sets (all used variants)
     * [movielens_gcmc_training_visualization.ipynb](02_gcmc/movielens/movielens_gcmc_training_visualization.ipynb): Loss visualization for Movielens data sets (all used variants)
     
