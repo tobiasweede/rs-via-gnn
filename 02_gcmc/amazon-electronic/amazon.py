@@ -1,4 +1,4 @@
-"""MovieLens dataset"""
+"""Amazon dataset"""
 import os
 import zipfile
 

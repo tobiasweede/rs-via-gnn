@@ -28,7 +28,7 @@ from torch.nn.parallel import DistributedDataParallel
 
 from amazon import Amazon
 from model import GCMCLayer, BiDecoder
-from utils import get_activation, get_optimizer, torch_total_param_num, to_etype_name, MetricLogger
+from utils import get_activation, get_optimizer, torch_total_param_num, to_etype_name, MetricLogger, torch_net_info
 
 
 class Net(nn.Module):
@@ -298,6 +298,9 @@ def run(proc_id, n_gpus, args, devices, dataset):
                                     os.path.join(args.save_dir, 'test_loss%d.csv' % args.save_id))
 
     for epoch in range(1, args.train_max_epoch):
+        if epoch == 1:
+            print("Total #Param of net: %d" % (torch_total_param_num(net)))
+            print(torch_net_info(net, save_path=os.path.join(args.save_dir, 'net%d.txt' % args.save_id)))
         if epoch > 1:
             t0 = time.time()
         net.train()
