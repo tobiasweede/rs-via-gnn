@@ -14,25 +14,29 @@ Parameters to run:
 --data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=stack --gcn_agg_units 50 --gcn_out_units 25  # ML-10m stack aggregator
 --data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=sum --gcn_agg_units 50 --gcn_out_units 25  # ML-10m sum aggregator
 """
-import torch
-import numpy as np
-import sys, copy, math, time, pdb, warnings, traceback
-import scipy.io as sio
-import scipy.sparse as ssp
 import os.path
-import random
-import argparse
-from shutil import copy, rmtree, copytree
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from util_functions import *
+import traceback
+from shutil import copy, rmtree
+
 from data_utils import *
+from models import *
 from preprocessing import *
 from train_eval import *
-from models import *
 
-import traceback
-import warnings
-import sys
+
+def torch_total_param_num(net):
+    return sum([np.prod(p.shape) for p in net.parameters()])
+
+def torch_net_info(net, save_path=None):
+    info_str = 'Total Param Number: {}\n'.format(torch_total_param_num(net)) + \
+               'Params:\n'
+    for k, v in net.named_parameters():
+        info_str += '\t{}: {}, {}\n'.format(k, v.shape, np.prod(v.shape))
+    info_str += str(net)
+    if save_path is not None:
+        with open(save_path, 'w') as f:
+            f.write(info_str)
+    return info_str
 
 # used to traceback which code cause warnings, can delete
 def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
@@ -420,6 +424,9 @@ model = IGMC(
 )
 total_params = sum(p.numel() for param in model.parameters() for p in param)
 print(f'Total number of parameters is {total_params}')
+
+print("Total #Param of net: %d" % (torch_total_param_num(model)))
+print(torch_net_info(model, save_path=os.path.join(args.res_dir, 'net.txt')))
 
 if not args.no_train:
     train_multiple_epochs(
