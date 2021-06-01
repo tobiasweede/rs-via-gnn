@@ -116,7 +116,7 @@ def sparse_to_tuple(sparse_mx):
 
 def create_trainvaltest_split(dataset, seed=1234, testing=False, datasplit_path=None, 
                               datasplit_from_file=False, verbose=True, rating_map=None, 
-                              post_rating_map=None, ratio=1.0):
+                              post_rating_map=None, ratio=1.0, use_features=False):
     """
     Splits data set into train/val/test sets from full bipartite adjacency matrix. Shuffling of dataset is done in
     load_data function.
@@ -137,7 +137,8 @@ def create_trainvaltest_split(dataset, seed=1234, testing=False, datasplit_path=
 
     else:
         num_users, num_items, u_nodes, v_nodes, ratings, u_features, v_features = load_data(dataset, seed=seed,
-                                                                                            verbose=verbose)
+                                                                                            verbose=verbose,
+                                                                                            use_features=use_features)
 
         with open(datasplit_path, 'wb') as f:
             pkl.dump([num_users, num_items, u_nodes, v_nodes, ratings, u_features, v_features], f)

@@ -125,7 +125,7 @@ parser.add_argument('--lr', type=float, default=1e-3, metavar='LR',
                     help='learning rate (default: 1e-3)')
 parser.add_argument('--lr-decay-step-size', type=int, default=50,
                     help='decay lr by factor A every B steps')
-parser.add_argument('--lr-decay-factor', type=float, default=1e-5,
+parser.add_argument('--lr-decay-factor', type=float, default=0,
                     help='decay lr by factor A every B steps')
 parser.add_argument('--epochs', type=int, default=80, metavar='N',
                     help='number of epochs to train')
@@ -278,7 +278,7 @@ elif args.data_name == 'ml_1m':
         test_v_indices, class_values
     ) = create_trainvaltest_split(
         args.data_name, 2021, args.testing, datasplit_path, True, True, rating_map,
-        post_rating_map, args.ratio
+        post_rating_map, args.ratio, use_features=args.use_features
     )
 else:
     (

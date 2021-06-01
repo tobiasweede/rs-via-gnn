@@ -85,7 +85,7 @@ def download_dataset(dataset, files, data_dir):
         #shutil.rmtree(target_dir)
 
 
-def load_data(fname, seed=1234, verbose=True):
+def load_data(fname, seed=1234, verbose=True, use_features=False):
     """ Loads dataset and creates adjacency matrix
     and feature matrix
 
@@ -181,13 +181,13 @@ def load_data(fname, seed=1234, verbose=True):
         num_genres = genre_headers.shape[0]
 
         v_features = np.zeros((num_items, num_genres), dtype=np.float32)
-        for movie_id, g_vec in zip(movie_df['movie id'].values.tolist(), movie_df[genre_headers].values.tolist()):
-            # Check if movie_id was listed in ratings file and therefore in mapping dictionary
-            if movie_id in v_dict.keys():
-                v_features[v_dict[movie_id], :] = g_vec
+        if use_features:
+            for movie_id, g_vec in zip(movie_df['movie id'].values.tolist(), movie_df[genre_headers].values.tolist()):
+                # Check if movie_id was listed in ratings file and therefore in mapping dictionary
+                if movie_id in v_dict.keys():
+                    v_features[v_dict[movie_id], :] = g_vec
 
         # User features
-
         sep = r'|'
         users_file = data_dir + files[2]
         users_headers = ['user id', 'age', 'gender', 'occupation', 'zip code']
@@ -202,15 +202,16 @@ def load_data(fname, seed=1234, verbose=True):
         num_feats = 2 + len(occupation_dict)
 
         u_features = np.zeros((num_users, num_feats), dtype=np.float32)
-        for _, row in users_df.iterrows():
-            u_id = row['user id']
-            if u_id in u_dict.keys():
-                # age
-                u_features[u_dict[u_id], 0] = row['age']
-                # gender
-                u_features[u_dict[u_id], 1] = gender_dict[row['gender']]
-                # occupation
-                u_features[u_dict[u_id], occupation_dict[row['occupation']]] = 1.
+        if use_features:
+            for _, row in users_df.iterrows():
+                u_id = row['user id']
+                if u_id in u_dict.keys():
+                    # age
+                    u_features[u_dict[u_id], 0] = row['age']
+                    # gender
+                    u_features[u_dict[u_id], 1] = gender_dict[row['gender']]
+                    # occupation
+                    u_features[u_dict[u_id], occupation_dict[row['occupation']]] = 1.
 
         u_features = sp.csr_matrix(u_features)
         v_features = sp.csr_matrix(v_features)
