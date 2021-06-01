@@ -4,6 +4,7 @@ adapted from: https://github.com/dmlc/dgl/tree/master/examples/pytorch/gcmc
 
 Parameters to run:
 
+# fir ml-100k, omit --use_one_hot_fea to use user and item features
 --data_name=ml-100k  --use_one_hot_fea --gcn_agg_accum=stack  # ML-100k stack aggregator
 --data_name=ml-100k  --use_one_hot_fea --gcn_agg_accum=sum    # ML-100k sum aggregator
 
