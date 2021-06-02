@@ -150,19 +150,13 @@ def create_trainvaltest_split(dataset, seed=1234, testing=False, datasplit_path=
     rating_dict = {r: i for i, r in enumerate(np.sort(np.unique(ratings)).tolist())}
 
     # number of test and validation edges
-    if dataset == 'ml_25m':
-        print("Split dataset into train/val/test by time ...")
-        num_train = int(ratings.shape[0] * 0.7)
-        num_val = int(ratings.shape[0] * 0.8) - num_train
-        num_test = ratings.shape[0] - num_train - num_val
+    print("Using random dataset split ...")
+    num_test = int(np.ceil(ratings.shape[0] * 0.2))
+    if dataset == 'ml_100k' or dataset == 'electronic':
+        num_val = int(np.ceil(ratings.shape[0] * 0.2))
     else:
-        print("Using random dataset split ...")
-        num_test = int(np.ceil(ratings.shape[0] * 0.2))
-        if dataset == 'ml_100k':
-            num_val = int(np.ceil(ratings.shape[0] * 0.2))
-        else:
-            num_val = int(np.ceil(ratings.shape[0] * 0.9 * 0.05))
-        num_train = ratings.shape[0] - num_val - num_test
+        num_val = int(np.ceil(ratings.shape[0] * 0.9 * 0.05))
+    num_train = ratings.shape[0] - num_val - num_test
 
     pairs_nonzero = np.vstack([u_nodes, v_nodes]).transpose()
 

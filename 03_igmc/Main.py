@@ -4,6 +4,7 @@ adapted from: https://github.com/muhanzhang/IGMC
 
 Parameters to run:
 
+# preprocessing
 --data_name=ml-100k  --use_one_hot_fea --gcn_agg_accum=stack  # ML-100k stack aggregator
 --data_name=ml-100k  --use_one_hot_fea --gcn_agg_accum=sum    # ML-100k sum aggregator
 
@@ -13,6 +14,12 @@ Parameters to run:
 # for the huge version we need to decrease the agg and out unit counts
 --data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=stack --gcn_agg_units 50 --gcn_out_units 25  # ML-10m stack aggregator
 --data_name=ml-1m  --use_one_hot_fea --gcn_agg_accum=sum --gcn_agg_units 50 --gcn_out_units 25  # ML-10m sum aggregator
+
+# dynamic
+--data-name ml_100k --save-appendix _dynamic --data-appendix _mnph203 --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
+--data-name ml_1m --save-appendix _dynamic --data-appendix _mnph203 --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
+--data-name ml_10m --save-appendix _dynamic --data-appendix _mnph204 --epochs 3 --max-nodes-per-hop 10 --testing --ensemble --dynamic-train --dynamic-test --dynamic-val
+--data-name electronic --save-appendix _dynamic --data-appendix _mnph203 --epochs 30 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
 """
 import os.path
 import traceback
@@ -229,7 +236,7 @@ with open(os.path.join(args.res_dir, 'cmd_input.txt'), 'a') as f:
     f.write(cmd_input)
 print('Command line input: ' + cmd_input + ' is saved.')
 
-if args.data_name in ['ml_1m', 'ml_10m', 'ml_25m']:
+if args.data_name in ['ml_1m', 'ml_10m']:
     if args.use_features:
         datasplit_path = (
             'raw_data/' + args.data_name + '/withfeatures_split_seed' + 
@@ -272,6 +279,16 @@ elif args.data_name == 'ml_100k':
     )
 elif args.data_name == 'ml_1m':
     print("Using MovieLens with own 60/20/20 split...")
+    (
+        u_features, v_features, adj_train, train_labels, train_u_indices, train_v_indices,
+        val_labels, val_u_indices, val_v_indices, test_labels, test_u_indices,
+        test_v_indices, class_values
+    ) = create_trainvaltest_split(
+        args.data_name, 2021, args.testing, datasplit_path, True, True, rating_map,
+        post_rating_map, args.ratio, use_features=args.use_features
+    )
+elif args.data_name == 'electronic':
+    print("Using Amazon Electronic with 60/20/20 split...")
     (
         u_features, v_features, adj_train, train_labels, train_u_indices, train_v_indices,
         val_labels, val_u_indices, val_v_indices, test_labels, test_u_indices,
