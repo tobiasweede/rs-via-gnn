@@ -215,7 +215,49 @@ def load_data(fname, seed=1234, verbose=True, use_features=False):
 
         u_features = sp.csr_matrix(u_features)
         v_features = sp.csr_matrix(v_features)
-        
+
+    elif fname == 'goodreads':
+        data_dir = '/home/weiss/rs_data/amazon-electronic-product-recommendation/'
+        target_dir = 'raw_data/' + fname
+        os.makedirs(target_dir, exist_ok=True)  # raise no error if already exists
+
+        files = ['ratings_Electronics (1).csv']
+
+        sep = ','
+        filename = data_dir + files[0]
+
+        dtypes = {
+            'u_nodes': np.str, 'v_nodes': np.str,
+            'ratings': np.int, 'timestamp': np.float64}
+
+        data = pd.read_csv(
+            filename, sep=sep, header=None,
+            names=['u_nodes', 'v_nodes', 'ratings', 'timestamp'], dtype=dtypes)
+
+        # convert users and items to interger
+        # if we want to revert we have to return the global maps (what we don't atm)
+        global_user_id_map = {ele: i for i, ele in enumerate(data['u_nodes'])}
+        global_item_id_map = {ele: i for i, ele in enumerate(data['v_nodes'])}
+        data['u_nodes'] = data['u_nodes'].map(global_user_id_map).astype(np.int)
+        data['v_nodes'] = data['v_nodes'].map(global_item_id_map).astype(np.int)
+
+        # shuffle here like cf-nade paper with python's own random class
+        # make sure to convert to list, otherwise random.shuffle acts weird on it without a warning
+        data_array = data.values.tolist()
+        random.seed(seed)
+        random.shuffle(data_array)
+        data_array = np.array(data_array)
+
+        u_nodes_ratings = data_array[:, 0].astype(dtypes['u_nodes'])
+        v_nodes_ratings = data_array[:, 1].astype(dtypes['v_nodes'])
+        ratings = data_array[:, 2].astype(dtypes['ratings'])
+
+        u_nodes_ratings, u_dict, num_users = map_data(u_nodes_ratings)
+        v_nodes_ratings, v_dict, num_items = map_data(v_nodes_ratings)
+
+        u_nodes_ratings, v_nodes_ratings = u_nodes_ratings.astype(np.int64), v_nodes_ratings.astype(np.int32)
+        ratings = ratings.astype(np.float64)
+
     elif fname == 'electronic':
         data_dir = '/home/weiss/rs_data/amazon-electronic-product-recommendation/'
         target_dir = 'raw_data/' + fname
