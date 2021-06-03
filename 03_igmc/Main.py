@@ -297,6 +297,16 @@ elif args.data_name == 'electronic':
         args.data_name, 2021, args.testing, datasplit_path, True, True, rating_map,
         post_rating_map, args.ratio, use_features=args.use_features
     )
+elif args.data_name == 'electronic':
+    print("Using Amazon Electronic with 60/20/20 split...")
+    (
+        u_features, v_features, adj_train, train_labels, train_u_indices, train_v_indices,
+        val_labels, val_u_indices, val_v_indices, test_labels, test_u_indices,
+        test_v_indices, class_values
+    ) = create_trainvaltest_split(
+        args.data_name, 2021, args.testing, datasplit_path, True, True, rating_map,
+        post_rating_map, args.ratio, use_features=args.use_features
+    )
 else:
     (
         u_features, v_features, adj_train, train_labels, train_u_indices, train_v_indices,

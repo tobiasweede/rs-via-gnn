@@ -1,10 +1,9 @@
 # RS via GNN
+This repository contains supplimentary experiment code for
+
+***Recommender Systems via Graph Neural Networks***
 
 ## Overview
-This repository contains experiment code for the 
-master thesis 
-
-***Recommender Systems via Graph Neural Networks***.
 
 We address:
 * Fundamental proof of concept for the _Message Passing_ paradigm
