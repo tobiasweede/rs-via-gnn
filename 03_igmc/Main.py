@@ -20,6 +20,7 @@ Parameters to run:
 --data-name ml_1m --save-appendix _dynamic --data-appendix _mnph203 --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
 --data-name ml_10m --save-appendix _dynamic --data-appendix _mnph204 --epochs 3 --max-nodes-per-hop 10 --testing --ensemble --dynamic-train --dynamic-test --dynamic-val
 --data-name electronic --save-appendix _dynamic --data-appendix _mnph203 --epochs 30 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
+--data-name goodreads --save-appendix _goodreads_dynamic --data-appendix _goodreads_dynamic --epochs 30 --max-nodes-per-hop 10 --testing --ensemble --dynamic-train --dynamic-test --dynamic-val
 """
 import os.path
 import traceback

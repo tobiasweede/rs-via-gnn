@@ -223,23 +223,20 @@ def load_data(fname, seed=1234, verbose=True, use_features=False):
 
         files = ['goodreads_interactions.csv']
 
-        sep = ','
         filename = data_dir + files[0]
 
-        dtypes = {
-            'u_nodes': np.str, 'v_nodes': np.str,
-            'ratings': np.int, 'timestamp': np.float64}
+        data = pd.read_csv(filename)
+        data = data[data['rating'] != 0]  # drop empty reviews
+        data.drop(columns=['is_read', 'is_reviewed'], inplace=True)
+        data.rename(columns={'book_id': 'item_id'}, inplace=True)
 
-        data = pd.read_csv(
-            filename, sep=sep, header=None,
-            names=['u_nodes', 'v_nodes', 'ratings', 'timestamp'], dtype=dtypes)
-
-        # convert users and items to interger
-        # if we want to revert we have to return the global maps (what we don't atm)
-        global_user_id_map = {ele: i for i, ele in enumerate(data['u_nodes'])}
-        global_item_id_map = {ele: i for i, ele in enumerate(data['v_nodes'])}
-        data['u_nodes'] = data['u_nodes'].map(global_user_id_map).astype(np.int)
-        data['v_nodes'] = data['v_nodes'].map(global_item_id_map).astype(np.int)
+        # Keep entries where the user has rated more than n items and less than m items
+        n = 50
+        m = 1000
+        counts = data['user_id'].value_counts()
+        mask = (counts >= n) & (counts <= m)
+        print(mask.value_counts())
+        data = data[data['user_id'].isin(mask[mask == True].index)]
 
         # shuffle here like cf-nade paper with python's own random class
         # make sure to convert to list, otherwise random.shuffle acts weird on it without a warning
