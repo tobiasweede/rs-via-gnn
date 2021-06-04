@@ -217,11 +217,11 @@ def load_data(fname, seed=1234, verbose=True, use_features=False):
         v_features = sp.csr_matrix(v_features)
 
     elif fname == 'goodreads':
-        data_dir = '/home/weiss/rs_data/amazon-electronic-product-recommendation/'
+        data_dir = '/home/weiss/rs_data/goodreads/'
         target_dir = 'raw_data/' + fname
         os.makedirs(target_dir, exist_ok=True)  # raise no error if already exists
 
-        files = ['ratings_Electronics (1).csv']
+        files = ['goodreads_interactions.csv']
 
         sep = ','
         filename = data_dir + files[0]
