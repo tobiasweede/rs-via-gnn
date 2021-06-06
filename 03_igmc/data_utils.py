@@ -225,18 +225,26 @@ def load_data(fname, seed=1234, verbose=True, use_features=False):
 
         filename = data_dir + files[0]
 
-        data = pd.read_csv(filename)
-        data = data[data['rating'] != 0]  # drop empty reviews
+        sep = ','
+
+        dtypes = {
+            'u_nodes': np.int32, 'v_nodes': np.int32, 'is_read': np.int32,
+            'ratings': np.float32, 'is_reviewed': np.int32}
+
+        data = pd.read_csv(
+            filename, sep=sep, skiprows=1,
+            names=['u_nodes', 'v_nodes', 'is_read', 'ratings', 'is_reviewed'], dtype=dtypes)
+
+        data = data[data['ratings'] != 0]  # drop empty reviews
         data.drop(columns=['is_read', 'is_reviewed'], inplace=True)
-        data.rename(columns={'book_id': 'item_id'}, inplace=True)
 
         # Keep entries where the user has rated more than n items and less than m items
         n = 50
         m = 1000
-        counts = data['user_id'].value_counts()
+        counts = data['u_nodes'].value_counts()
         mask = (counts >= n) & (counts <= m)
         print(mask.value_counts())
-        data = data[data['user_id'].isin(mask[mask == True].index)]
+        data = data[data['u_nodes'].isin(mask[mask == True].index)]
 
         # shuffle here like cf-nade paper with python's own random class
         # make sure to convert to list, otherwise random.shuffle acts weird on it without a warning
