@@ -17,6 +17,11 @@ _Only relevant files and folders are listed:_
 * __00_zachary__
   
     To warm-up, we showcase several versions of the ZKC separation both in Pytorch Geometric (PyG) and Deep Graph Library (DGL).
+    
+    The model is comprised of two GCN Layers:
+    ![ZKC model](00_zachary/zkc-model.png "ZKC model")
+
+    The separation process per eproch looks as follows:
 
     ![ZKC separation](00_zachary/zkc-separation.gif "ZKC separation")
 
