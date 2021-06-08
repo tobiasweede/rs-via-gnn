@@ -65,11 +65,15 @@ def map_data(data):
 def download_dataset(dataset, files, data_dir):
     """ Downloads dataset if files are not present. """
 
+    if dataset == 'ml_100k_canonical_split':
+        dataset = 'ml_100k'
+
     if not np.all([os.path.isfile(data_dir + f) for f in files]):
         url = "http://files.grouplens.org/datasets/movielens/" + dataset.replace('_', '-') + '.zip'
         request = urlopen(url)
 
         print('Downloading %s dataset' % dataset)
+
 
         if dataset in ['ml_100k', 'ml_1m']:
             target_dir = 'raw_data/' + dataset.replace('_', '-')

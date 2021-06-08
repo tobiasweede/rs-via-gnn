@@ -334,6 +334,8 @@ def load_official_trainvaltest_split(dataset, testing=False, rating_map=None, po
     For each split computes 1-of-num_classes labels. Also computes training
     adjacency matrix. Assumes flattening happens everywhere in row-major fashion.
     """
+    if dataset == 'ml_100k_canonical_split':
+        dataset = 'ml_100k'
 
     sep = '\t'
 
