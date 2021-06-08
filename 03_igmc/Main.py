@@ -5,25 +5,22 @@ adapted from: https://github.com/muhanzhang/IGMC
 Parameters to run:
 
 # preprocessing
---data_name=ml-100k --use_one_hot_fea --gcn_agg_accum=stack  # ML-100k stack aggregator
---data_name=ml-100k --use_one_hot_fea --gcn_agg_accum=sum    # ML-100k sum aggregator
+--data-name ml_100k --save-appendix _preprocessing --data-appendix _preprocessing --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  # ML-100k
+--data-name ml_1m --save-appendix _preprocessing --data-appendix _preprocessing --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  # ML-1m
 
---data_name=ml-1m --use_one_hot_fea --gcn_agg_accum=stack  # ML-1m stack aggregator
---data_name=ml-1m --use_one_hot_fea --gcn_agg_accum=sum    # ML-1m sum aggregator
 
-# for the huge version we need to decrease the agg and out unit counts
---data_name=ml-1m --use_one_hot_fea --gcn_agg_accum=stack --gcn_agg_units 50 --gcn_out_units 25  # ML-10m stack aggregator
---data_name=ml-1m --use_one_hot_fea --gcn_agg_accum=sum --gcn_agg_units 50 --gcn_out_units 25  # ML-10m sum aggregator
+# preprocessing with features
+--data-name ml_100k --use-features --save-appendix _preprocessing_with_features --data-appendix preprocessing_with_features --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  # ML-100k
 
-# dynamic
---data-name ml_100k --use_one_hot_fea --save-appendix _dynamic --data-appendix _mnph203 --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
---data-name ml_1m --use_one_hot_fea --save-appendix _dynamic --data-appendix _mnph203 --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
+# dynamic without features
+--data-name ml_100k --use_one_hot_fea --save-appendix _dynamic_without_fea --data-appendix _mnph203 --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
+--data-name ml_1m --use_one_hot_fea --save-appendix _dynamic_without_fea --data-appendix _mnph203 --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
 --data-name ml_10m ---use_one_hot_fea --save-appendix _dynamic --data-appendix _mnph204 --epochs 3 --max-nodes-per-hop 10 --testing --ensemble --dynamic-train --dynamic-test --dynamic-val
 --data-name electronic --save-appendix _dynamic --data-appendix _mnph203 --epochs 30 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
 --data-name goodreads --save-appendix _goodreads_dynamic --data-appendix _goodreads_dynamic --epochs 30 --max-nodes-per-hop 10 --testing --ensemble --dynamic-train --dynamic-test --dynamic-val
 
 # dynamic with features
---data-name ml_100k -save-appendix _dynamic --data-appendix _with-features --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
+--data-name ml_100k --use-features -save-appendix _dynamic_with_fea --data-appendix _with-features --epochs 300 --max-nodes-per-hop 10 --testing --ensemble  --dynamic-train --dynamic-test --dynamic-val
 """
 import os.path
 import traceback
