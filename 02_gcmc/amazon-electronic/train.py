@@ -5,7 +5,7 @@ adapted from: https://github.com/dmlc/dgl/tree/master/examples/pytorch/gcmc
 Parameters to run:
 
 --data_name=electronic --use_one_hot_fea --gcn_agg_accum=stack  # stack aggregator
---data_name=electronic --use_one_hot_fea --gcn_agg_accum=sum    # sum aggregator
+--data_name=electronic --use_one_hot_fea  --gcn_agg_units 50 --gcn_out_units 25 --gcn_agg_accum=sum    # sum aggregator
 
 """
 import argparse

@@ -343,16 +343,10 @@ class Amazon(object):
         -------
         rating_info : pd.DataFrame
         """
-        rating_info = pd.read_csv(
-            file_path, sep=sep, header=None,
-            names=['user_id', 'item_id', 'rating', 'timestamp'],
-            # dtype={'user_id': np.int32, 'item_id': np.int32,
-            #       'ratings': np.float32, 'timestamp': np.int64},
-            engine='python')
-        counts = rating_info['user_id'].value_counts()  # count ratings per user
-        mask = (counts >= n) & (counts <= m)
-        # only keep users with more than n and less than m ratings
-        rating_info = rating_info[rating_info['user_id'].isin(mask[mask == True].index)]
+        # we preprocess amazon in mln-descriptive-analysis.ipynb !!!
+        # in particular we do not use the .csv file (which is an abbreviated kaggle data set version)
+        DIR = '/home/weiss/rs_data/amazon-electronic-product-recommendation/'
+        rating_info = pd.read_pickle(DIR+'amazon-electronic-ratings.pkl')
         return rating_info
 
     def _load_raw_user_info(self):
