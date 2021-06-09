@@ -328,7 +328,7 @@ class Amazon(object):
             orign_info = orign_info.reset_index(drop=True)
             return orign_info
 
-    def _load_raw_rates(self, file_path, sep, n=50):
+    def _load_raw_rates(self, file_path, sep, n=50, m=1000):
         """In electronics, the rates have the following format
 
         UserID;ItemID;Rating;Timestamp
@@ -350,8 +350,9 @@ class Amazon(object):
             #       'ratings': np.float32, 'timestamp': np.int64},
             engine='python')
         counts = rating_info['user_id'].value_counts()  # count ratings per user
-        # only keep users with more than n ratings
-        rating_info = rating_info[rating_info['user_id'].isin(counts[counts >= n].index)]
+        mask = (counts >= n) & (counts <= m)
+        # only keep users with more than n and less than m ratings
+        rating_info = rating_info[rating_info['user_id'].isin(mask[mask == True].index)]
         return rating_info
 
     def _load_raw_user_info(self):
